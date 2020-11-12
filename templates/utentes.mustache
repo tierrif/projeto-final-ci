@@ -1,0 +1,21 @@
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Nº Utente</th>
+            <th scope="col">Morada</th>
+            <th scope="col">Consultas</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#utentes}}
+        <tr>
+            <td>{{nome}}</td>
+            <td>{{num_utente}}</td>
+            <td>{{morada_simples}}</td>
+        </tr>
+        {{/utentes}}
+        </tbody>
+    </table>
+</div>
