@@ -74,7 +74,7 @@ class Renderer {
 
     public function __construct($uri) {
         // Carregar a pasta de templates para o mustache.
-        $loader = new Mustache_Loader_FilesystemLoader("./templates");
+        $loader = new Mustache_Loader_FilesystemLoader('./templates');
         // Instanciar o mustache com o loader.
         $this->mustache = new Mustache_Engine(['loader' => $loader]);
         // Setar o URI.
@@ -91,7 +91,7 @@ class Renderer {
      */
     public function render($view, $data = [], $nav = true) {
         // TODO: alterar forma de chamada.
-        echo $this->mustache->render('common/header');
+        echo $this->mustache->render('common/header', ['style_path' => base_url('assets/css/style.css')]);
         if ($nav) {
             // Todos os controladores da barra de navegação.
             $controllers = [
@@ -101,7 +101,9 @@ class Renderer {
                 'produtos' => 'Fármacos'
             ];
             // TODO: Se o utilizador neste momento tem permissões admin, mostrar esse controlador.
-            if (false) $controllers['admin'] = 'Espaço admin';
+            if (false) {
+                $controllers['admin'] = 'Espaço admin';
+            }
             // TODO: se tem login, botão é logout, senão é login.
             $loginButtonUri = '';
             $loginButtonText = '';

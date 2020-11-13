@@ -1,10 +1,6 @@
 <? defined('BASEPATH') or exit('No direct script access allowed');
 
 class SearchModel extends CI_Model {
-    public function __construct() {
-        parent::__construct();
-    }
-
     /*
      * Pesquisar conteúdo de uma tabela e
      * coluna.

@@ -1,0 +1,70 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #343A40
+}
+
+.bg-nav {
+  background: rgb(0, 68, 114);
+}
+
+.paginacao {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.paginacao a:not(a[rel="next"]):not(a[rel="prev"]) {
+  display: inline-block;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 50%;
+  text-decoration: none;
+  border: 2px solid transparent;
+  color: white;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.paginacao a:not(a[rel="next"]):not(a[rel="prev"]):hover {
+  background: rgb(0, 68, 114);
+  color: white;
+}
+
+.paginacao a[rel="next"], .paginacao a[rel="prev"] {
+  color: #31A2B8;
+  text-align: center;
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.paginacao a[rel="next"]:hover, .paginacao a[rel="prev"]:hover {
+  background: #31A2B8;
+  color: white;
+}
+
+.paginacao strong {
+  background: rgb(0, 68, 114);
+  color: white;
+  cursor: default;
+  display: inline-block;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 50%;
+  border: 2px solid rgb(0, 68, 114);
+}

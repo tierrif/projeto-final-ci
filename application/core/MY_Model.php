@@ -1,10 +1,6 @@
-<? defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 abstract class MY_Model extends CI_Model {
-    public function __construct() {
-        parent::__construct();
-    }
-
     /*
      * Obter o número de valores total.
      */
@@ -55,5 +51,5 @@ abstract class MY_Model extends CI_Model {
      * Retornar, na classe que herdará esta,
      * o nome da tabela correspondente.
      */
-    public abstract function getTable();
+    abstract public function getTable();
 }

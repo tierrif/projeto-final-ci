@@ -1,17 +1,40 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">EPCC</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-            {{#nav_elements}}
-                <li class="nav-item {{active}}"><a class="nav-link" href="{{uri}}">{{text}}</a></li>
-            {{/nav_elements}}
-        </ul>
-        <form class="form-inline my-2 my-lg-0" action="{{search_context}}" method="POST">
-            <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar..." aria-label="Pesquisar" name="search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
-        </form>
-    </div>
-</nav><br/>
+<nav class="navbar navbar-expand-lg navbar-dark bg-nav">
+  <a class="navbar-brand" href="#">EPCC</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNav"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      {{#nav_elements}}
+      <li class="nav-item {{ active }}">
+        <a class="nav-link" href="{{ uri }}">{{ text }}</a>
+      </li>
+      {{/nav_elements}}
+    </ul>
+    <form
+      class="form-inline my-2 my-lg-0"
+      action="{{ search_context }}"
+      method="POST"
+    >
+      <input
+        class="form-control mr-sm-2"
+        type="search"
+        placeholder="Pesquisar..."
+        aria-label="Pesquisar"
+        name="search"
+      />
+      <button class="btn btn-outline-info my-2 my-sm-0" type="submit">
+        Pesquisar
+      </button>
+    </form>
+  </div>
+</nav>
+<br />
