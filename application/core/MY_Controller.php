@@ -58,7 +58,8 @@ class MY_Controller extends CI_Controller {
      */
     public function search() {
         // Por defeito, pesquisa utentes.
-        print_r($this->searchModel->searchByTableAndColumn('utente', 'nome', $this->input->post('search')));
+        // TODO: Implementar pesquisa.
+        print_r($this->searchModel->searchByTableAndColumn('utente', 'nome', $this->input->get('search')));
     }
 }
 
@@ -91,6 +92,7 @@ class Renderer {
      */
     public function render($view, $data = [], $nav = true) {
         // TODO: alterar forma de chamada.
+        // Renderizar a template de início de página.
         echo $this->mustache->render('common/header', ['style_path' => base_url('assets/css/style.css')]);
         if ($nav) {
             // Todos os controladores da barra de navegação.
@@ -120,9 +122,12 @@ class Renderer {
                     'text' => $text
                 ];
             }
+            // Renderizar a barra de navegação com os dados adicionais.
             echo $this->mustache->render('common/nav', $navData);
         }
+        // Renderizar a view dinâmica.
         echo $this->mustache->render($view, $data);
+        // Renderizar a template de fim de página.
         echo $this->mustache->render('common/footer');
     }
 }

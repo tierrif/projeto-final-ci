@@ -7,6 +7,6 @@ class Login extends MY_Controller {
     }
 
     public function index() {
-        test();
+        $this->renderer->render('login');
     }
 }
