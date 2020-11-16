@@ -11,6 +11,7 @@ class Utentes extends MY_Controller {
         parent::__construct();
         $this->load->model('utenteModel');
         $this->load->library('pagination');
+        $this->load->helper('serverConfig');
     }
 
     /*
@@ -23,7 +24,7 @@ class Utentes extends MY_Controller {
         // Configuração da paginação.
         $config['base_url'] = base_url('utentes');
         $config['total_rows'] = $this->utenteModel->getCount();
-        $config['per_page'] = 3; // TODO: configuração.
+        $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
         $config['uri_segment'] = 2;
         // Inicializar a paginação.
         $this->pagination->initialize($config);
@@ -32,17 +33,5 @@ class Utentes extends MY_Controller {
         $data['pagination'] = $this->pagination->create_links();
         // Carregar template.
         $this->renderer->render('utentes', $data);
-    }
-
-    /*
-     * Details - Detalhes de um
-     * utente específico.
-     */
-    public function details($id) {
-        // Se o ID não for passado (/consultas/details, em vez de /consultas/details/:id), redireciona.
-        if (!$id) {
-            redirect(base_url('utentes'));
-            return;
-        }
     }
 }

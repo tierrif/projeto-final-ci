@@ -1,0 +1,27 @@
+<div class="container">
+    <table class="table table-striped table-dark table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Nº Utente</th>
+            <th scope="col">Morada</th>
+            <th scope="col">Consultas</th>
+            <th scope="col">Detalhes</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#utentes}}
+            <tr>
+                <td>{{ nome }}</td>
+                <td>{{ num_utente }}</td>
+                <td>{{ morada_simples }}</td>
+                <td>{{ consultas }}</td>
+                <td>{{ detalhes_uri }}</td>
+            </tr>
+        {{/utentes}}
+        </tbody>
+    </table>
+    <div class="paginacao">
+        {{&pagination}}
+    </div>
+</div>
