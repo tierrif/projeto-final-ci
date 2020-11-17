@@ -111,6 +111,7 @@ class Renderer {
             $loginButtonText = '';
             // Definir o array associativo navData.
             $navData = [
+                'home_url' => base_url(),
                 'login_button_uri' => $loginButtonUri,
                 'login_button_text' => $loginButtonText,
                 'search_context' => base_url($this->uri->segment(1) . '/search')
