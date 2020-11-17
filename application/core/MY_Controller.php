@@ -45,6 +45,7 @@ class MY_Controller extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->renderer = new Renderer($this->uri);
+        $this->load->helper('permissions');
         // Carregar o modelo de pesquisa.
         $this->load->model('searchModel');
     }
@@ -91,7 +92,6 @@ class Renderer {
      * $nav - Se true, mostrar barra de navegação, se false, não.
      */
     public function render($view, $data = [], $nav = true) {
-        // TODO: alterar forma de chamada.
         // Renderizar a template de início de página.
         echo $this->mustache->render('common/header', ['style_path' => base_url('assets/css/style.css')]);
         if ($nav) {
@@ -102,8 +102,7 @@ class Renderer {
                 'utentes' => 'Lista de utentes',
                 'produtos' => 'Fármacos'
             ];
-            // TODO: Se o utilizador neste momento tem permissões admin, mostrar esse controlador.
-            if (false) {
+            if (hasPermission('admin')) {
                 $controllers['admin'] = 'Espaço admin';
             }
             // TODO: se tem login, botão é logout, senão é login.
