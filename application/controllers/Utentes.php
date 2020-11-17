@@ -11,7 +11,7 @@ class Utentes extends MY_Controller {
         parent::__construct();
         $this->load->model('utenteModel');
         $this->load->library('pagination');
-        $this->load->helper('serverConfig');
+        $this->load->helper(['serverConfig', 'util', 'adapter']);
     }
 
     /*
@@ -25,11 +25,10 @@ class Utentes extends MY_Controller {
         $config['base_url'] = base_url('utentes');
         $config['total_rows'] = $this->utenteModel->getCount();
         $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
-        $config['uri_segment'] = 2;
+        $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
         // Inicializar a paginação.
         $this->pagination->initialize($config);
-        // TODO: Verificar permissões.
-        $data['utentes'] = $this->utenteModel->getAll($config['per_page'], $page);
+        $data['utentes'] = (new UtenteSimplesAdapter)->adapt($this->utenteModel->getAllWithMorada($config['per_page'], $page));
         $data['pagination'] = $this->pagination->create_links();
         // Carregar template.
         $this->renderer->render('utentes', $data);

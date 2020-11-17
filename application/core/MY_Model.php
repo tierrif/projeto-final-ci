@@ -25,7 +25,7 @@ abstract class MY_Model extends CI_Model {
      * pelo ID.
      */
     public function getById($id) {
-        $query = $this->db->get_where('id', $id);
+        $query = $this->db->get_where($this->getTable(), ['id' => $id]);
         return $query->row();
     }
 
