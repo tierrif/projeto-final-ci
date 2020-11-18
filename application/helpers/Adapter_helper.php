@@ -72,7 +72,9 @@ class UtenteAdminAdapter extends Adapter {
         return [
             'nome',
             'numero_utente' => 'nUtente',
-            'cidade' => 'morada/city'
+            'cidade' => 'morada/city',
+            'consultas_inacabadas',
+            'consultas_uri'
         ];
     }
 }

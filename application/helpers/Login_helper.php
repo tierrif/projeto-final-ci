@@ -5,5 +5,5 @@ function checkPassword() {
 }
 
 function isLoggedIn() {
-    return false; // TODO criar login.
+    return true; // TODO criar login.
 }

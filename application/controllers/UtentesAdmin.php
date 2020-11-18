@@ -3,10 +3,32 @@
 class UtentesAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
-        $this->load->helper('login');
+        $this->load->helper(['login', 'serverConfig', 'adapter', 'util']);
+        $this->load->library('pagination');
+        $this->load->model('utenteModel');
         if (!isLoggedIn()) {
             redirect(base_url('noaccess'));
         }
+    }
+
+    /*
+     * Index - Listagem de todos
+     * os utentes.
+     */
+    public function index() {
+        // Obter a página atual.
+        $page = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+        // Configuração da paginação.
+        $config['base_url'] = base_url('utentes');
+        $config['total_rows'] = $this->utenteModel->getCount();
+        $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
+        $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
+        // Inicializar a paginação.
+        $this->pagination->initialize($config);
+        $data['utentes'] = (new UtenteAdminAdapter)->adapt($this->utenteModel->getAllWithMoradaAndConsultas($config['per_page'], $page));
+        $data['pagination'] = $this->pagination->create_links();
+        // Carregar template.
+        $this->renderer->render('admin/utentes', $data, true, true);
     }
 
     /*

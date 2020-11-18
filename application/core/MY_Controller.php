@@ -91,17 +91,24 @@ class Renderer {
      * $data - Array associativo com todos os dados passados na template.
      * $nav - Se true, mostrar barra de navegação, se false, não.
      */
-    public function render($view, $data = [], $nav = true) {
+    public function render($view, $data = [], $nav = true, $admin = false) {
         // Renderizar a template de início de página.
         echo $this->mustache->render('common/header', ['style_path' => base_url('assets/css/style.css')]);
         if ($nav) {
             // Todos os controladores da barra de navegação.
-            $controllers = [
-                '' => 'Home',
-                'consultas' => 'Consultas',
-                'utentes' => 'Lista de utentes',
-                'produtos' => 'Fármacos'
-            ];
+            if ($admin) {
+                $controllers = [
+                    'consultasAdmin' => 'Consultas',
+                    'utentesAdmin' => 'Utentes',
+                    'produtos' => 'Produtos'
+                ];
+            } else {
+                $controllers = [
+                    '' => 'Home',
+                    'consultas' => 'Consultas',
+                    'utentes' => 'Lista de utentes'
+                ];
+            }
             if (hasPermission('admin')) {
                 $controllers['admin'] = 'Espaço admin';
             }
@@ -122,8 +129,9 @@ class Renderer {
                     'text' => $text
                 ];
             }
+            $template = $admin ? 'common/nav_admin' : 'common/nav';
             // Renderizar a barra de navegação com os dados adicionais.
-            echo $this->mustache->render('common/nav', $navData);
+            echo $this->mustache->render($template, $navData);
         }
         // Renderizar a view dinâmica.
         echo $this->mustache->render($view, $data);

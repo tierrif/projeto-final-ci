@@ -8,7 +8,13 @@ body {
 }
 
 .bg-nav {
-  background: rgb(0, 68, 114);
+  background: #004472;
+  box-shadow: 0 4px 8px 0 #000, 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.bg-nav-admin {
+  background: #850000;
+  box-shadow: 0 4px 8px 0 #000, 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .paginacao {

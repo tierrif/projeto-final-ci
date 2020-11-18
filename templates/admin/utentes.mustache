@@ -4,8 +4,8 @@
         <tr>
             <th scope="col">Nome</th>
             <th scope="col">Nº Utente</th>
-            <th scope="col">Morada</th>
-            <th scope="col">Consultas</th>
+            <th scope="col">Cidade</th>
+            <th scope="col">Consultas por fazer</th>
             <th scope="col">Detalhes</th>
         </tr>
         </thead>
@@ -13,9 +13,9 @@
         {{#utentes}}
             <tr>
                 <td>{{ nome }}</td>
-                <td>{{ num_utente }}</td>
-                <td>{{ morada_simples }}</td>
-                <td>{{ consultas }}</td>
+                <td>{{ numero_utente }}</td>
+                <td>{{ cidade }}</td>
+                <td><a href="{{ consultas_uri }}">{{ consultas_inacabadas }}</a></td>
                 <td>{{ detalhes_uri }}</td>
             </tr>
         {{/utentes}}
