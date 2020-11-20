@@ -52,10 +52,14 @@ class UtenteModel extends MY_Model {
             $one['consultas'] = $this->getConsultas($one['id']);
             // Adicionar o estado das consultas.
             $one['consultas_inacabadas'] = $this->getQuantidadeConsultasInacabadas($one['consultas']);
+            // Classe para tornar a âncora desativada se não houverem consultas.
+            $one['link_class'] = $one['consultas_inacabadas'] ? TABLE_LINK_CLASS_NAME : DISABLED_LINK_CLASS_NAME;
             // Se consultas_inacabadas for 0, mensagem por defeito:
             if (!$one['consultas_inacabadas']) $one['consultas_inacabadas'] = DEFAULT_CONSULTAS_INACABADAS;
             // Adicionar URI para mostrar as consultas pendentes.
             $one['consultas_uri'] = base_url('consultasAdmin/perUtente/' . $one['id'] . '/finishedOnly');
+            // Adicionar URI para os detalhes do utente.
+            $one['detalhes_uri'] = base_url('utentesAdmin/details/' . $one['id']);
             // Adicionar ao array a retornar este utente atualizado.
             $toReturn[] = $one;
         }

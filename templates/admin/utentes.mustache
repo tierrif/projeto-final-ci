@@ -15,8 +15,8 @@
                 <td>{{ nome }}</td>
                 <td>{{ numero_utente }}</td>
                 <td>{{ cidade }}</td>
-                <td><a href="{{ consultas_uri }}">{{ consultas_inacabadas }}</a></td>
-                <td>{{ detalhes_uri }}</td>
+                <td><a class="{{ link_class }}" href="{{ consultas_uri }}">{{ consultas_inacabadas }}</a></td>
+                <td><a class="table-link" href="{{ detalhes_uri }}">Detalhes</a></td>
             </tr>
         {{/utentes}}
         </tbody>

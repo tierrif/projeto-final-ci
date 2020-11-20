@@ -53,4 +53,5 @@ $route['default_controller'] = 'Base';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 $route['utentes/(:num)'] = 'utentes/index/$1';
+$route['utentesAdmin/(:num)'] = 'utentesAdmin/index/$1';
 $route['search'] = 'utentes/search';

@@ -47,7 +47,9 @@ abstract class Adapter {
                     // Prevenir repetição do primeiro elemento.
                     if ($i++ === 0) continue;
                     // Atualizar o array com novo nível.
-                    $pos = $pos[$element];
+                    $pos = arrayValue($pos, $element);
+                    // Se for nulo, adicionar valor por defeito.
+                    if ($pos === null) $pos = DEFAULT_VALUE;
                 }
                 $adaptedArray[$key] = $pos;
             }
@@ -74,7 +76,9 @@ class UtenteAdminAdapter extends Adapter {
             'numero_utente' => 'nUtente',
             'cidade' => 'morada/city',
             'consultas_inacabadas',
-            'consultas_uri'
+            'consultas_uri',
+            'detalhes_uri',
+            'link_class'
         ];
     }
 }

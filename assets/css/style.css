@@ -74,3 +74,40 @@ body {
   border-radius: 50%;
   border: 2px solid rgb(0, 68, 114);
 }
+
+.table-link {
+  display: inline-block;
+  color: #31A2B8;
+  text-decoration: none;
+}
+
+.table-link:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.table-link::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: all .1s;
+}
+
+.table-link:hover::after {
+  color: white;
+  width: 100%;
+}
+
+.disabled-link {
+  color: #bebebe;
+  pointer-events: none;
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+.disabled-link:hover {
+  color: #bebebe;
+  text-decoration: none;
+}
