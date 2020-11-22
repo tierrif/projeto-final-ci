@@ -137,4 +137,13 @@ class Renderer {
         // Renderizar a template de fim de página.
         echo $this->mustache->render('common/footer');
     }
+
+    /*
+     * Retorna em string o que for renderizado
+     * à parte manualmente. Apenas deve ser usado
+     * para includes.
+     */
+    public function manualRender($view, $data) {
+
+    }
 }
