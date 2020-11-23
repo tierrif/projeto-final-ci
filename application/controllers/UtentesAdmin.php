@@ -3,8 +3,8 @@
 class UtentesAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
-        $this->load->helper(['login', 'serverConfig', 'adapter', 'util']);
-        $this->load->library('pagination');
+        $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
+        $this->load->library(['pagination', 'form_validation']);
         $this->load->model('utenteModel');
         if (!isLoggedIn()) {
             redirect(base_url('noaccess'));
@@ -27,6 +27,7 @@ class UtentesAdmin extends MY_Controller {
         $this->pagination->initialize($config);
         $data['utentes'] = (new UtenteAdminAdapter)->adapt($this->utenteModel->getAllWithMoradaAndConsultas($config['per_page'], $page));
         $data['pagination'] = $this->pagination->create_links();
+
         // Carregar template.
         $this->renderer->render('admin/utentes', $data, true, true);
     }
@@ -40,6 +41,67 @@ class UtentesAdmin extends MY_Controller {
         if (!$id) {
             redirect(base_url('utentes'));
             return;
+        }
+
+        // Dados dinâmicos a renderizar no mustache.
+        $utente = $this->utenteModel->getById($id);
+        $data = (new UtenteDetailsAdapter)->adapt($utente);
+        $data['morada_form_include'] = $this->renderer->manualRender('includes/morada_form',
+            (new MoradaDetailsAdapter)->adapt($this->utenteModel->getMoradaById($utente['idMorada'])));
+        $data['action_uri'] = base_url('utentesAdmin/update');
+
+        // Renderiza.
+        $this->renderer->render('details/utente', $data, true, true);
+    }
+
+    protected function formElements() {
+        return [
+            [
+                'field' => 'nome',
+                'label' => 'Nome',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'numutente',
+                'label' => 'Número de Utente',
+                'rules' => 'required|numeric'
+            ],
+            [
+                'field' => 'morada',
+                'label' => 'Morada (linha 1)',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'morada2',
+                'label' => 'Morada (linha 2)',
+                'rules' => ''
+            ],
+            [
+                'field' => 'cidade',
+                'label' => 'Cidade',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'estado',
+                'label' => 'Estado/Distrito',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'codpostal',
+                'label' => 'Código Postal',
+                'rules' => 'required'
+            ]
+        ];
+    }
+
+    protected function handleDatabaseCalls($id) {
+        if ($this->utenteModel->getById($id)) {
+            $this->utenteModel->update([
+                'id' => $id,
+                'nome' => $this->input->post('nome'),
+                'nUtente' => $this->input->post('numutente')
+            ]);
+            
         }
     }
 }

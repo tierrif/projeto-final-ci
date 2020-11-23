@@ -4,7 +4,9 @@
     type="text"
     class="form-control"
     id="inputAddress"
-    placeholder="1234 Main St"
+    placeholder="Morada..."
+    value="{{ morada_linha_1_value }}"
+    name="morada"
   />
 </div>
 <div class="form-group">
@@ -13,20 +15,44 @@
     type="text"
     class="form-control"
     id="inputAddress2"
-    placeholder="Apartment, studio, or floor"
+    placeholder="Morada (linha 2)..."
+    value="{{ morada_linha_2_value }}"
+    name="morada2"
   />
 </div>
 <div class="form-row">
   <div class="form-group col-md-6">
     <label for="inputCity">Cidade</label>
-    <input type="text" class="form-control" id="inputCity" />
+    <input
+      type="text"
+      class="form-control"
+      id="inputCity"
+      placeholder="Cidade..."
+      value="{{ cidade_value }}"
+      name="cidade"
+    />
   </div>
   <div class="form-group col-md-4">
     <label for="inputCity">Estado/Distrito</label>
-    <input type="text" class="form-control" id="inputCity" />
+    <input
+      type="text"
+      class="form-control"
+      id="inputCity"
+      placeholder="Estado/Distrito..."
+      value="{{ estado_value }}"
+      name="estado"
+    />
   </div>
   <div class="form-group col-md-2">
     <label for="inputZip">Código Postal</label>
-    <input type="text" class="form-control" id="inputZip" />
+    <input
+      type="text"
+      class="form-control"
+      id="inputZip"
+      placeholder="Código Postal..."
+      value="{{ codigo_postal_value }}"
+      name="codpostal"
+    />
   </div>
+  <input type="hidden" value="{{ id_morada }}"/>
 </div>

@@ -60,6 +60,39 @@ abstract class Adapter {
     }
 }
 
+/*
+ * Adapter para apenas um item. Adapter é
+ * por defeito para listas.
+ */
+abstract class SingleItemAdapter extends Adapter {
+    public function adapt($originalContent) {
+        // Inicializar array adaptado.
+        $adaptedArray = [];
+        // Iterar.
+        foreach ($this->toAdapt() as $key => $value) {
+            if (is_numeric($key)) $key = $value; // No caso de ser elemento simples.
+            // Transformar a string, fazendo com que possamos iterar o que está ao lado de '/'.
+            $split = explode('/', $value);
+            // A primeira posição. Será atualizada em cada nível.
+            $pos = arrayValue($originalContent, $split[0]);
+            // Variável de controlo para prevenir repetição do primeiro elemento.
+            $i = 0;
+            foreach ($split as $element) {
+                // Se não existirem barras, isto não é necessário.
+                if (count($split) === 1) break;
+                // Prevenir repetição do primeiro elemento.
+                if ($i++ === 0) continue;
+                // Atualizar o array com novo nível.
+                $pos = arrayValue($pos, $element);
+                // Se for nulo, adicionar valor por defeito.
+                if ($pos === null) $pos = DEFAULT_VALUE;
+            }
+            $adaptedArray[$key] = $pos;
+        }
+        return $adaptedArray;
+    }
+}
+
 class UtenteSimplesAdapter extends Adapter {
     public function toAdapt() {
         return [
@@ -79,6 +112,27 @@ class UtenteAdminAdapter extends Adapter {
             'consultas_uri',
             'detalhes_uri',
             'link_class'
+        ];
+    }
+}
+
+class UtenteDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'nome_value' => 'nome',
+            'num_utente_value' => 'nUtente'
+        ];
+    }
+}
+
+class MoradaDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'morada_linha_1_value' => 'firstLine',
+            'morada_linha_2_value' => 'secondLine',
+            'cidade_value' => 'city',
+            'estado_value' => 'state',
+            'codigo_postal_value' => 'zipCode'
         ];
     }
 }

@@ -15,6 +15,10 @@ class UtenteModel extends MY_Model {
         return $query->row_array();
     }
 
+    public function updateMorada($data) {
+        
+    }
+
     public function getConsultas($utenteId) {
         // Obter todas as consultas deste utente.
         $query = $this->db->get_where($this->consultaTable, ['idUtente' => $utenteId]);

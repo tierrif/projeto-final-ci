@@ -26,7 +26,7 @@ abstract class MY_Model extends CI_Model {
      */
     public function getById($id) {
         $query = $this->db->get_where($this->getTable(), ['id' => $id]);
-        return $query->row();
+        return $query->row_array();
     }
 
     /*

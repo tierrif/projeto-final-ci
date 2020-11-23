@@ -61,6 +61,61 @@ class MY_Controller extends CI_Controller {
         // TODO: Implementar pesquisa.
         print_r($this->searchModel->searchByTableAndColumn('utente', 'nome', $this->input->get('search')));
     }
+
+    /*
+     * Em páginas be back-office, os forms
+     * recorrem a esta ação do controlador.
+     * Se não for uma página em que haja um form
+     * de back-office, NÃO IMPLEMENTAR.
+     * 
+     * Este método não deve ser implementado
+     * diretamente, mas sim #formElements().
+     */
+    public function update($id) {
+        // Verifica se #formElements() foi implementado.
+        if (!$this->formElements()) {
+            // Por defeito, é como que esta ação não existisse.
+            show_404(); // Função global do CodeIgniter.
+            return;
+        }
+        
+        // Foi implementado, por isso, setar as regras.
+        $this->form_validation->set_rules($this->formElements());
+        // Chamadas à base de dados não podem ser dinâmicas.
+        $this->handleDatabaseCalls($id);
+        // Redireciona.
+        redirect($this->getDetailsUri());
+    }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Retornar array associativo com toda a
+     * informação dos elementos do form
+     * desta página.
+     */
+    protected function formElements() {
+        return false; // Retorna falso por defeito para lançar 404 se não for implementado em /update.
+    }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Todas as chamadas à base de dados
+     * numa resposta ao form devem ser
+     * feitas neste método. 
+     */
+    protected function handleDatabaseCalls() {}
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Retornar a URI-base desta ação de detalhes
+     * no controlador do back-office. 
+     */
+    protected function getDetailsUri() {
+        return null;
+    }
 }
 
 /*
@@ -144,6 +199,6 @@ class Renderer {
      * para includes.
      */
     public function manualRender($view, $data) {
-
+        return $this->mustache->render($view, $data);
     }
 }
