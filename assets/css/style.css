@@ -7,6 +7,10 @@ body {
   background: #343A40
 }
 
+label {
+  color: white;
+}
+
 .bg-nav {
   background: #004472;
   box-shadow: 0 4px 8px 0 #000, 0 6px 20px 0 rgba(0, 0, 0, 0.19);

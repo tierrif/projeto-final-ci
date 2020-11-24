@@ -17,6 +17,10 @@
  * ou, sem barra de navegação:
  *
  *      $this->renderer->render(view, data, false)
+ * 
+ * ou, com barra de navegação admin:
+ * 
+ *      $this->renderer->render(view, data, true, true)
  *
  */
 class MY_Controller extends CI_Controller {
@@ -71,7 +75,9 @@ class MY_Controller extends CI_Controller {
      * Este método não deve ser implementado
      * diretamente, mas sim #formElements().
      */
-    public function update($id) {
+    public function update() {
+        // Nome do controlador.
+        $controller = strtolower(get_class($this));
         // Verifica se #formElements() foi implementado.
         if (!$this->formElements()) {
             // Por defeito, é como que esta ação não existisse.
@@ -81,10 +87,70 @@ class MY_Controller extends CI_Controller {
         
         // Foi implementado, por isso, setar as regras.
         $this->form_validation->set_rules($this->formElements());
+        // Eliminar tags <p> do validation_errors().
+        $this->form_validation->set_error_delimiters('', '');
+
+        // Executar o form validation.
+        if ($this->form_validation->run()) {
+            $this->session->set_flashdata('alertType', 'alert-success');
+            $this->session->set_flashdata('alertMessage', 'Sucesso.');
+        } else {
+            $this->session->set_flashdata('alertType', 'alert-danger');
+            $this->session->set_flashdata('alertMessage', validation_errors());
+        }
+
         // Chamadas à base de dados não podem ser dinâmicas.
-        $this->handleDatabaseCalls($id);
+        $this->handleDatabaseCalls($this->input->post('id'));
         // Redireciona.
-        redirect($this->getDetailsUri());
+        redirect(base_url($controller . '/details/') . $this->input->post('id'));
+    }
+
+    public function details($id = 0, $fromForm = null) {
+        // Nome do controlador.
+        $controller = get_class($this);
+        // Se o ID não for passado (/details, em vez de /details/:id), redireciona.
+        if (!$id) {
+            redirect(base_url($controller));
+            return;
+        }
+
+        // Código irregular.
+        $data = $this->onDetailsRender($id, $fromForm);
+
+        // Componentes em comum.
+        $data['action_uri'] = base_url($controller . '/details/' . $id . '/fromForm');
+        $data['del_uri'] = base_url($controller . '/delete/' . $id);
+
+        // O comportamento da ação é ligeiramente diferente ao responder ao form.
+        if ($fromForm) {
+            // Verifica se #formElements() foi implementado.
+            if (!$this->formElements()) {
+                // Por defeito, é como que esta ação não existisse.
+                show_404(); // Função global do CodeIgniter.
+                return;
+            }
+
+            // Foi implementado, por isso, setar as regras.
+            $this->form_validation->set_rules($this->formElements());
+            // Eliminar tags <p> do validation_errors().
+            $this->form_validation->set_error_delimiters('', '');
+
+            // Executar o form validation.
+            if ($this->form_validation->run()) {
+                $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
+                    'alert_type' => 'alert-success',
+                    'alert_message' => 'Sucesso.'
+                ]);
+            } else {
+                $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
+                    'alert_type' => 'alert-danger',
+                    'alert_message' => validation_errors()
+                ]);
+            }
+        }
+
+        // Renderiza.
+        $this->renderer->render('details/utente', $data, true, true);
     }
 
     /*
@@ -105,15 +171,28 @@ class MY_Controller extends CI_Controller {
      * numa resposta ao form devem ser
      * feitas neste método. 
      */
-    protected function handleDatabaseCalls() {}
+    protected function handleDatabaseCalls($id) {}
 
     /*
      * NÃO OBRIGATÓRIO
      * 
-     * Retornar a URI-base desta ação de detalhes
-     * no controlador do back-office. 
+     * Chamado quando a ação /details é
+     * chamada. 
+     * 
+     * Retornar os dados dinâmicos do mustache que
+     * são irregulares.
      */
-    protected function getDetailsUri() {
+    protected function onDetailsRender($id, $fromForm) {
+        show_404(); // Não renderiza nada, mas mostra 404 por defeito.
+    }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Retornar o nome da template de detalhes,
+     * se aplicável. 
+     */
+    protected function getDetailsTemplate() {
         return null;
     }
 }
@@ -121,8 +200,6 @@ class MY_Controller extends CI_Controller {
 /*
  * Classe responsável pelo carregamento de ficheiros
  * mustache sem repetir código.
- * Uma instância desta classe deve ser guardada no controlador
- * abstrato CMustacheController.
  */
 class Renderer {
     private $mustache;

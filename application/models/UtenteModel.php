@@ -16,7 +16,12 @@ class UtenteModel extends MY_Model {
     }
 
     public function updateMorada($data) {
-        
+        $this->db->where('id', $data['id']);
+        return $this->db->update($this->moradaTable, $data);
+    }
+
+    public function addMorada($data) {
+        $this->db->insert($this->moradaTable, $data);
     }
 
     public function getConsultas($utenteId) {
@@ -70,6 +75,16 @@ class UtenteModel extends MY_Model {
 
         // Retornar.
         return $toReturn;
+    }
+
+    public function deleteAlongMorada($id) {
+        // Obtém ID da morada
+        $idMorada = $this->getById($id)['idMorada'];
+        // Elimina da tabela de utentes.
+        $this->delete($id);
+        // Elimina da tabela das moradas.
+        $this->db->where('id', $id);
+        $this->db->delete($this->moradaTable);
     }
 
     private function getQuantidadeConsultasInacabadas($consultas) {

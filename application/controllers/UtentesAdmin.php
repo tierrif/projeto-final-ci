@@ -4,7 +4,7 @@ class UtentesAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
-        $this->load->library(['pagination', 'form_validation']);
+        $this->load->library(['pagination', 'form_validation', 'session']);
         $this->load->model('utenteModel');
         if (!isLoggedIn()) {
             redirect(base_url('noaccess'));
@@ -32,26 +32,36 @@ class UtentesAdmin extends MY_Controller {
         $this->renderer->render('admin/utentes', $data, true, true);
     }
 
+    public function delete($id = 0) {
+        // Se o ID não for passado (/delete, em vez de /delete/:id), redireciona.
+        if (!$id) {
+            redirect(base_url('utentesAdmin'));
+            return;
+        }
+
+
+    }
+
     /*
      * Details - Detalhes de um
      * utente específico.
      */
-    public function details($id) {
-        // Se o ID não for passado (/consultas/details, em vez de /consultas/details/:id), redireciona.
-        if (!$id) {
-            redirect(base_url('utentes'));
-            return;
-        }
-
+    protected function onDetailsRender($id, $fromForm) {
         // Dados dinâmicos a renderizar no mustache.
         $utente = $this->utenteModel->getById($id);
-        $data = (new UtenteDetailsAdapter)->adapt($utente);
-        $data['morada_form_include'] = $this->renderer->manualRender('includes/morada_form',
+        // Se o pedido for feito pelo form, em POST, não setar $data da base de dados.
+        if (!$fromForm) {
+            $data = (new UtenteDetailsAdapter)->adapt($utente);
+            $data['morada_form_include'] = $this->renderer->manualRender('includes/morada_form',
             (new MoradaDetailsAdapter)->adapt($this->utenteModel->getMoradaById($utente['idMorada'])));
-        $data['action_uri'] = base_url('utentesAdmin/update');
+        } else {
+            $data = [
+                'nome_value' => $this->input->post('nome'),
+                // TODO: Adicionar o resto dos dados.
+            ];
+        }
 
-        // Renderiza.
-        $this->renderer->render('details/utente', $data, true, true);
+        return $data;
     }
 
     protected function formElements() {
@@ -74,7 +84,7 @@ class UtentesAdmin extends MY_Controller {
             [
                 'field' => 'morada2',
                 'label' => 'Morada (linha 2)',
-                'rules' => ''
+                'rules' => 'none'
             ],
             [
                 'field' => 'cidade',
@@ -95,13 +105,36 @@ class UtentesAdmin extends MY_Controller {
     }
 
     protected function handleDatabaseCalls($id) {
-        if ($this->utenteModel->getById($id)) {
-            $this->utenteModel->update([
-                'id' => $id,
-                'nome' => $this->input->post('nome'),
-                'nUtente' => $this->input->post('numutente')
-            ]);
-            
+        // Arrays associativos que funcionam tanto para UPDATE como INSERT.
+        $utente = [
+            'id' => ($id > 0 ? $id : null), // Ao inserir, se ID é nulo, auto-incrementa na BD.
+            'nome' => $this->input->post('nome'),
+            'nUtente' => $this->input->post('numutente')
+        ];
+        $morada = [
+            'id' => ($id > 0 ? $this->input->post('idmorada') : null),
+            'firstLine' => $this->input->post('morada'),
+            'secondLine' => $this->input->post('morada2'),
+            'zipCode' => $this->input->post('codpostal'),
+            'state' => $this->input->post('estado'),
+            'city' => $this->input->post('cidade')
+        ];
+
+        // Verificar se o utente existe. Se sim, atualizar dados.
+        if ($id > 0) {
+            // Atualizar dados pelo model.
+            $this->utenteModel->update($utente);
+            $this->utenteModel->updateMorada($morada);
+            // Já atualizámos, o código seguinte apenas serve para inserir.
+            return;
         }
+
+        // Inserir dados pelo model.
+        $this->utenteModel->add($utente);
+        $this->utenteModel->addMorada($morada);
+    }
+
+    protected function getTemplateName() {
+        return 'utente';
     }
 }

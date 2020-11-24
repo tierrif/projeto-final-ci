@@ -120,7 +120,8 @@ class UtenteDetailsAdapter extends SingleItemAdapter {
     public function toAdapt() {
         return [
             'nome_value' => 'nome',
-            'num_utente_value' => 'nUtente'
+            'num_utente_value' => 'nUtente',
+            'id'
         ];
     }
 }
@@ -132,7 +133,8 @@ class MoradaDetailsAdapter extends SingleItemAdapter {
             'morada_linha_2_value' => 'secondLine',
             'cidade_value' => 'city',
             'estado_value' => 'state',
-            'codigo_postal_value' => 'zipCode'
+            'codigo_postal_value' => 'zipCode',
+            'id_morada' => 'id'
         ];
     }
 }
