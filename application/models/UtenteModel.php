@@ -22,6 +22,7 @@ class UtenteModel extends MY_Model {
 
     public function addMorada($data) {
         $this->db->insert($this->moradaTable, $data);
+        return $this->db->insert_id();
     }
 
     public function getConsultas($utenteId) {

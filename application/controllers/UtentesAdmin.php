@@ -4,9 +4,9 @@ class UtentesAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
-        $this->load->library(['pagination', 'form_validation', 'session']);
+        $this->load->library(['pagination', 'form_validation']);
         $this->load->model('utenteModel');
-        if (!isLoggedIn()) {
+        if (!isLoggedIn() || !hasPermission('admin', $this->session)) {
             redirect(base_url('noaccess'));
         }
     }
@@ -17,9 +17,9 @@ class UtentesAdmin extends MY_Controller {
      */
     public function index() {
         // Obter a página atual.
-        $page = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
         // Configuração da paginação.
-        $config['base_url'] = base_url('utentesAdmin');
+        $config['base_url'] = base_url('UtentesAdmin/index');
         $config['total_rows'] = $this->utenteModel->getCount();
         $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
         $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
@@ -27,19 +27,18 @@ class UtentesAdmin extends MY_Controller {
         $this->pagination->initialize($config);
         $data['utentes'] = (new UtenteAdminAdapter)->adapt($this->utenteModel->getAllWithMoradaAndConsultas($config['per_page'], $page));
         $data['pagination'] = $this->pagination->create_links();
+        $data['utente_form'] = $this->renderer->manualRender('details/utente', [
+            'morada_form_include' => $this->renderer->manualRender('includes/morada_form', []),
+            'action_uri' => base_url('UtentesAdmin/details/-1/insert')
+        ]);
 
         // Carregar template.
         $this->renderer->render('admin/utentes', $data, true, true);
     }
 
-    public function delete($id = 0) {
-        // Se o ID não for passado (/delete, em vez de /delete/:id), redireciona.
-        if (!$id) {
-            redirect(base_url('utentesAdmin'));
-            return;
-        }
-
-
+    protected function onDelete($id) {
+        // Elimina.
+        $this->utenteModel->deleteAlongMorada($id);
     }
 
     /*
@@ -56,8 +55,16 @@ class UtentesAdmin extends MY_Controller {
             (new MoradaDetailsAdapter)->adapt($this->utenteModel->getMoradaById($utente['idMorada'])));
         } else {
             $data = [
-                'nome_value' => $this->input->post('nome'),
-                // TODO: Adicionar o resto dos dados.
+                'nome_value' => set_value('nome'),
+                'num_utente_value' => set_value('numutente'),
+                'morada_form_include' => $this->renderer->manualRender('includes/morada_form', [
+                    'id_morada' => (set_value('idmorada') ? set_value('idmorada') : $utente['idMorada']),
+                    'morada_linha_1_value' => set_value('morada'),
+                    'morada_linha_2_value' => set_value('morada2'),
+                    'cidade_value' => set_value('cidade'),
+                    'estado_value' => set_value('estado'),
+                    'codigo_postal_value' => set_value('codpostal')
+                ])
             ];
         }
 
@@ -80,11 +87,6 @@ class UtentesAdmin extends MY_Controller {
                 'field' => 'morada',
                 'label' => 'Morada (linha 1)',
                 'rules' => 'required'
-            ],
-            [
-                'field' => 'morada2',
-                'label' => 'Morada (linha 2)',
-                'rules' => 'none'
             ],
             [
                 'field' => 'cidade',
@@ -126,15 +128,25 @@ class UtentesAdmin extends MY_Controller {
             $this->utenteModel->update($utente);
             $this->utenteModel->updateMorada($morada);
             // Já atualizámos, o código seguinte apenas serve para inserir.
-            return;
+            return $id;
         }
 
         // Inserir dados pelo model.
-        $this->utenteModel->add($utente);
-        $this->utenteModel->addMorada($morada);
+        $moradaId = $this->utenteModel->addMorada($morada);
+        $utente['idMorada'] = $moradaId;
+        $newId = $this->utenteModel->add($utente);
+
+        // Retornar o ID.
+        return $newId;
     }
 
     protected function getTemplateName() {
         return 'utente';
+    }
+
+    protected function temporaryData() {
+        return [
+            'nome' => 'Vazio ' . date('d/m/yy H:i:s')
+        ];
     }
 }

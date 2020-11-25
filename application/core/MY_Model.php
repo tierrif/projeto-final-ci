@@ -35,6 +35,7 @@ abstract class MY_Model extends CI_Model {
      */
     public function add($data) {
         $this->db->insert($this->getTable(), $data);
+        return $this->db->insert_id();
     }
 
     public function update($data) {

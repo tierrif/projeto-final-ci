@@ -120,8 +120,7 @@ class UtenteDetailsAdapter extends SingleItemAdapter {
     public function toAdapt() {
         return [
             'nome_value' => 'nome',
-            'num_utente_value' => 'nUtente',
-            'id'
+            'num_utente_value' => 'nUtente'
         ];
     }
 }

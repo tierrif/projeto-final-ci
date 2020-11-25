@@ -48,7 +48,7 @@ class MY_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->renderer = new Renderer($this->uri);
+        $this->renderer = new Renderer($this->uri, $this->session);
         // Carregar o modelo de pesquisa.
         $this->load->model('searchModel');
     }
@@ -67,62 +67,45 @@ class MY_Controller extends CI_Controller {
     }
 
     /*
-     * Em páginas be back-office, os forms
+     * Em páginas de back-office, os forms
      * recorrem a esta ação do controlador.
      * Se não for uma página em que haja um form
      * de back-office, NÃO IMPLEMENTAR.
      * 
      * Este método não deve ser implementado
-     * diretamente, mas sim #formElements().
+     * diretamente, mas sim #onDetailsRender().
      */
-    public function update() {
-        // Nome do controlador.
-        $controller = strtolower(get_class($this));
-        // Verifica se #formElements() foi implementado.
-        if (!$this->formElements()) {
-            // Por defeito, é como que esta ação não existisse.
-            show_404(); // Função global do CodeIgniter.
-            return;
-        }
-        
-        // Foi implementado, por isso, setar as regras.
-        $this->form_validation->set_rules($this->formElements());
-        // Eliminar tags <p> do validation_errors().
-        $this->form_validation->set_error_delimiters('', '');
-
-        // Executar o form validation.
-        if ($this->form_validation->run()) {
-            $this->session->set_flashdata('alertType', 'alert-success');
-            $this->session->set_flashdata('alertMessage', 'Sucesso.');
-        } else {
-            $this->session->set_flashdata('alertType', 'alert-danger');
-            $this->session->set_flashdata('alertMessage', validation_errors());
-        }
-
-        // Chamadas à base de dados não podem ser dinâmicas.
-        $this->handleDatabaseCalls($this->input->post('id'));
-        // Redireciona.
-        redirect(base_url($controller . '/details/') . $this->input->post('id'));
-    }
-
-    public function details($id = 0, $fromForm = null) {
+    public function details($id = -1, $arg = null) {
         // Nome do controlador.
         $controller = get_class($this);
-        // Se o ID não for passado (/details, em vez de /details/:id), redireciona.
-        if (!$id) {
-            redirect(base_url($controller));
-            return;
+
+        // Se inserir.
+        if ($arg === 'insert') {
+            /*
+             * Para facilitar o uso do sistema,
+             * não requerir regras na primeira inserção.
+             * Basicamente, inserir. Dados temporários devem
+             * ser retornados em temporaryData().
+             */
+            foreach ($this->temporaryData() as $key => $value) {
+                if (!$this->input->post($key)) $_POST[$key] = $value;
+            }
+            
+            $id = $this->handleDatabaseCalls(-1);
         }
 
         // Código irregular.
-        $data = $this->onDetailsRender($id, $fromForm);
+        $data = $this->onDetailsRender($id, $arg);
 
         // Componentes em comum.
         $data['action_uri'] = base_url($controller . '/details/' . $id . '/fromForm');
         $data['del_uri'] = base_url($controller . '/delete/' . $id);
+        $data['form_footer_include'] = $this->renderer->manualRender('includes/form_footer', [
+            'del_uri' => base_url($controller . '/delete/' . $id)
+        ]);
 
         // O comportamento da ação é ligeiramente diferente ao responder ao form.
-        if ($fromForm) {
+        if ($arg === 'fromForm') {
             // Verifica se #formElements() foi implementado.
             if (!$this->formElements()) {
                 // Por defeito, é como que esta ação não existisse.
@@ -141,6 +124,9 @@ class MY_Controller extends CI_Controller {
                     'alert_type' => 'alert-success',
                     'alert_message' => 'Sucesso.'
                 ]);
+
+                // Código irregular da base de dados.
+                $this->handleDatabaseCalls($id);
             } else {
                 $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
                     'alert_type' => 'alert-danger',
@@ -151,6 +137,33 @@ class MY_Controller extends CI_Controller {
 
         // Renderiza.
         $this->renderer->render('details/utente', $data, true, true);
+    }
+
+    /*
+     * Em páginas de back-office, os forms
+     * recorrem a esta ação do controlador.
+     * Se não for uma página em que haja um form
+     * de back-office, NÃO IMPLEMENTAR.
+     * 
+     * Este método não deve ser implementado
+     * diretamente, mas sim #onDetailsRender().
+     */
+    public function delete($id = 0) {
+        // Se o ID não for passado (/delete, em vez de /delete/:id), redireciona.
+        if (!$id) {
+            redirect(base_url('UtentesAdmin'));
+            return;
+        }
+
+        // Código irregular.
+        $this->onDelete($id);
+
+        // Mostra um alert através de flashdata.
+        $this->session->set_flashdata('alertType', 'alert-success');
+        $this->session->set_flashdata('alertMessage', 'Eliminado com sucesso.');
+
+        // Redireciona.
+        redirect(base_url('UtentesAdmin'));
     }
 
     /*
@@ -182,7 +195,20 @@ class MY_Controller extends CI_Controller {
      * Retornar os dados dinâmicos do mustache que
      * são irregulares.
      */
-    protected function onDetailsRender($id, $fromForm) {
+    protected function onDetailsRender($id, $arg) {
+        show_404(); // Não renderiza nada, mas mostra 404 por defeito.
+    }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Chamado quando a ação /delete é
+     * chamada. 
+     * 
+     * Simplesmente fazer a ação necessária
+     * para eliminar da base de dados.
+     */
+    protected function onDelete($id) {
         show_404(); // Não renderiza nada, mas mostra 404 por defeito.
     }
 
@@ -195,6 +221,19 @@ class MY_Controller extends CI_Controller {
     protected function getDetailsTemplate() {
         return null;
     }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Retornar os dados temporários de um
+     * registo inserido por defeito, se
+     * vazios. Chave do array associativo é
+     * o nome do elemento do form e o valor
+     * é o valor temporário.
+     */
+    protected function temporaryData() {
+        return [];
+    }
 }
 
 /*
@@ -204,14 +243,17 @@ class MY_Controller extends CI_Controller {
 class Renderer {
     private $mustache;
     private $uri;
+    private $session;
 
-    public function __construct($uri) {
+    public function __construct($uri, $session) {
         // Carregar a pasta de templates para o mustache.
         $loader = new Mustache_Loader_FilesystemLoader('./templates');
         // Instanciar o mustache com o loader.
         $this->mustache = new Mustache_Engine(['loader' => $loader]);
         // Setar o URI.
         $this->uri = $uri;
+        // Setar a instância da biblioteca session.
+        $this->session = $session;
     }
 
     /*
@@ -224,7 +266,10 @@ class Renderer {
      */
     public function render($view, $data = [], $nav = true, $admin = false) {
         // Renderizar a template de início de página.
-        echo $this->mustache->render('common/header', ['style_path' => base_url('assets/css/style.css')]);
+        echo $this->mustache->render('common/header', [
+            'style_path' => base_url('assets/css/style.css'),
+            'script_path' => base_url('assets/js/scripts.js')
+        ]);
         if ($nav) {
             // Todos os controladores da barra de navegação.
             if ($admin) {
@@ -240,7 +285,7 @@ class Renderer {
                     'utentes' => 'Lista de utentes'
                 ];
             }
-            if (hasPermission('admin')) {
+            if (hasPermission('admin', $this->session)) {
                 $controllers['admin'] = 'Espaço admin';
             }
             // TODO: se tem login, botão é logout, senão é login.

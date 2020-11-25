@@ -115,3 +115,7 @@ label {
   color: #bebebe;
   text-decoration: none;
 }
+
+.modal-wider {
+  max-width: 1000px;
+}
