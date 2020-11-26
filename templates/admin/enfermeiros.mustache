@@ -1,0 +1,68 @@
+<div class="container">
+  <table class="table table-striped table-dark table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">Especialidade</th>
+        <th scope="col">Cidade</th>
+        <th scope="col">Detalhes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#enfermeiros}}
+      <tr>
+        <td>{{ nome }}</td>
+        <td>{{ especialidade }}</td>
+        <td>{{ cidade }}</td>
+        <td><a class="table-link" href="{{ detalhes_uri }}">Detalhes</a></td>
+      </tr>
+      {{/enfermeiros}}
+    </tbody>
+  </table>
+  <button
+    type="button"
+    class="btn btn-warning"
+    data-toggle="modal"
+    data-target="#insertModal"
+  >
+    Inserir enfermeiro
+  </button>
+  <div
+    class="modal fade"
+    id="insertModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="insertModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-wider" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="insertModalLabel">Novo enfermeiro</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Cancelar"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{&enfermeiro_form}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+          <button id="insert-btn" type="submit" class="btn btn-success" role="button">
+            Inserir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="paginacao">
+    {{&pagination}}
+  </div>
+</div>

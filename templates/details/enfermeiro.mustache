@@ -1,0 +1,51 @@
+<div class="container">
+  {{&alert}}
+  <form id="detailForm" action="{{ action_uri }}" method="POST">
+    <div class="form-group">
+      <label for="inputName">Nome</label>
+      <input
+        type="text"
+        class="form-control"
+        id="inputName"
+        placeholder="Nome"
+        value="{{ nome_value }}"
+        name="nome"
+      />
+    </div>
+    <div class="form-group">
+      <label for="inputEspecialidade">Especialidade</label>
+      <input
+        type="number"
+        class="form-control"
+        id="inputEspecialidade"
+        placeholder="Especialidade..."
+        value="{{ especialidade_value }}"
+        name="especialidade"
+      />
+    </div>
+    <div class="form-group">
+      <label for="inputNif">NIF</label>
+      <input
+        type="number"
+        class="form-control"
+        id="inputNif"
+        placeholder="NIF..."
+        value="{{ nif_value }}"
+        name="nif"
+      />
+    </div>
+    <div class="form-group">
+      <label for="inputNif">NIB</label>
+      <input
+        type="number"
+        class="form-control"
+        id="inputNib"
+        placeholder="NIB..."
+        value="{{ nib_value }}"
+        name="nib"
+      />
+    </div>
+    {{&morada_form_include}}
+    {{&form_footer_include}}
+  </form>
+</div>

@@ -136,7 +136,7 @@ class MY_Controller extends CI_Controller {
         }
 
         // Renderiza.
-        $this->renderer->render('details/utente', $data, true, true);
+        $this->renderer->render('details/' . $this->getTemplateName(), $data, true, true);
     }
 
     /*
@@ -151,7 +151,7 @@ class MY_Controller extends CI_Controller {
     public function delete($id = 0) {
         // Se o ID não for passado (/delete, em vez de /delete/:id), redireciona.
         if (!$id) {
-            redirect(base_url('UtentesAdmin'));
+            redirect(base_url(get_class($this)));
             return;
         }
 
@@ -163,7 +163,7 @@ class MY_Controller extends CI_Controller {
         $this->session->set_flashdata('alertMessage', 'Eliminado com sucesso.');
 
         // Redireciona.
-        redirect(base_url('UtentesAdmin'));
+        redirect(base_url(get_class($this)));
     }
 
     /*
@@ -233,6 +233,16 @@ class MY_Controller extends CI_Controller {
      */
     protected function temporaryData() {
         return [];
+    }
+
+    /*
+     * NÃO OBRIGATÓRIO
+     * 
+     * Retornar o nome da template de detalhes,
+     * se aplicável. Não incluir /details. 
+     */
+    protected function getTemplateName() {
+        return '';
     }
 }
 

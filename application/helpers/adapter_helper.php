@@ -93,7 +93,7 @@ abstract class SingleItemAdapter extends Adapter {
     }
 }
 
-class UtenteSimplesAdapter extends Adapter {
+class PessoaSimplesAdapter extends Adapter {
     public function toAdapt() {
         return [
             'nome',
@@ -134,6 +134,29 @@ class MoradaDetailsAdapter extends SingleItemAdapter {
             'estado_value' => 'state',
             'codigo_postal_value' => 'zipCode',
             'id_morada' => 'id'
+        ];
+    }
+}
+
+class EnfermeiroAdminAdapter extends Adapter {
+    public function toAdapt() {
+        return [
+            'nome',
+            'especialidade',
+            'cidade' => 'morada/city',
+            'detalhes_uri',
+            'link_class'
+        ];
+    }
+}
+
+class EnfermeiroDetailsAdapter extends Adapter {
+    public function toAdapt() {
+        return [
+            'nome_value' => 'nome',
+            'nif_value' => 'nif',
+            'nib_value' => 'nib',
+            'especialidade_value' => 'especialidade'
         ];
     }
 }
