@@ -1,0 +1,32 @@
+<div class="container">
+  {{&alert}}
+  <form id="contactForm" action="{{ action_uri }}" method="POST">
+    <div class="form-group">
+      <label for="inputName">Nome completo</label>
+      <input
+        type="text"
+        class="form-control"
+        id="inputName"
+        placeholder="Nome completo..."
+        value="{{ nome_value }}"
+        name="nome"
+      />
+    </div>
+    <div class="form-group">
+      <label for="inputEmail">E-mail</label>
+      <input
+        type="email"
+        class="form-control"
+        id="inputEmail"
+        placeholder="E-mail..."
+        value="{{ email_value }}"
+        name="email"
+      />
+    </div>
+    <div class="form-group">
+      <label for="mensagem">Mensagem</label>
+      <textarea class="form-control" id="mensagem" rows="3"></textarea>
+    </div>
+    <div class="g-recaptcha" data-sitekey="{{ recaptcha_public_key }}"></div>
+  </form>
+</div>

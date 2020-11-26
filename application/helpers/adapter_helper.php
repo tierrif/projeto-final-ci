@@ -150,7 +150,30 @@ class EnfermeiroAdminAdapter extends Adapter {
     }
 }
 
-class EnfermeiroDetailsAdapter extends Adapter {
+class EnfermeiroDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'nome_value' => 'nome',
+            'nif_value' => 'nif',
+            'nib_value' => 'nib',
+            'especialidade_value' => 'especialidade'
+        ];
+    }
+}
+
+class MedicoAdminAdapter extends Adapter {
+    public function toAdapt() {
+        return [
+            'nome',
+            'especialidade',
+            'cidade' => 'morada/city',
+            'detalhes_uri',
+            'link_class'
+        ];
+    }
+}
+
+class MedicoDetailsAdapter extends SingleItemAdapter {
     public function toAdapt() {
         return [
             'nome_value' => 'nome',
