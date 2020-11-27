@@ -10,17 +10,43 @@ class Contacto extends MY_Controller {
     public function __construct() {
         // Construtor-pai.
         parent::__construct();
-        $this->load->model('')
+        $this->load->model('contactoModel');
+        $this->load->library('form_validation');
     }
 
     public function index() {
-        
+        // Regras do form.
+        $this->form_validation->set_rules('nome', 'nome', 'required');
+        $this->form_validation->set_rules('email', 'email', 'required');
+        $this->form_validation->set_rules('mensagem', 'mensagem', 'required');
+        $this->form_validation->set_rules('g-recaptcha-response', 'CAPTCHA', 'required');
 
+        $data = [
+            'recaptcha_public_key' => RECAPTCHA_PUBLIC_KEY,
+            'nome' => $this->input->post('nome'),
+            'email' => $this->input->post('email'),
+            'mensagem' => $this->input->post('mensagem')
+        ];
+        // Eliminar tags <p> do validation_errors().
+        $this->form_validation->set_error_delimiters('', '');
+
+        // Verificar se o form é válido.
+        if ($this->form_validation->run() && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Submeter.
+            $this->submit($data);
+            return;
+        } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
+                'alert_type' => 'alert-danger',
+                'alert_message' => validation_errors()
+            ]);
+        }
+        
         // Carregar template.
-        $this->renderer->render('contacto', ['recaptcha_public_key' => RECAPTCHA_PUBLIC_KEY]);
+        $this->renderer->render('contacto', $data);
     }
     
-    public function submit() {
+    protected function submit($req) {
         // Resposta do form do captcha.
         $recaptchaReponse = $this->input->post('g-recaptcha-response');
       
@@ -45,14 +71,18 @@ class Contacto extends MY_Controller {
         // Resposta em JSON descodificada.
         $responseStatus = json_decode($response, true); // true: passar em array associativo.
         if (arrayValue($responseStatus, 'success')) {
-
-            $this->renderer->render('contacto_success', []);
+            $this->contactoModel->add([
+                'nome' => $this->input->post('nome'),
+                'email' => $this->input->post('email'),
+                'mensagem' => $this->input->post('mensagem')
+            ]);
+            $this->renderer->render('contacto_success', ['nome' => $this->input->post('nome')]);
         } else {
             // Erro, o CAPTCHA é inválido. Normalmente, isto não deve acontecer, porque o CAPTCHA pertence às regras do form.
             $this->session->set_flashdata('alertType', 'alert-danger');
             $this->session->set_flashdata('alertMessage', 'O CAPTCHA é inválido. Por favor, tente novamente.');
             // Tentar novamente.
-            redirect(base_url('Contacto'));
+            $this->renderer->render('contacto', $req);
         }
     }
 }

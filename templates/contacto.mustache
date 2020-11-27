@@ -8,7 +8,7 @@
         class="form-control"
         id="inputName"
         placeholder="Nome completo..."
-        value="{{ nome_value }}"
+        value="{{ nome }}"
         name="nome"
       />
     </div>
@@ -19,14 +19,15 @@
         class="form-control"
         id="inputEmail"
         placeholder="E-mail..."
-        value="{{ email_value }}"
+        value="{{ email }}"
         name="email"
       />
     </div>
     <div class="form-group">
       <label for="mensagem">Mensagem</label>
-      <textarea class="form-control" id="mensagem" rows="3"></textarea>
+      <textarea class="form-control" id="mensagem" rows="3" name="mensagem">{{ mensagem }}</textarea>
     </div>
     <div class="g-recaptcha" data-sitekey="{{ recaptcha_public_key }}"></div>
+    <button type="submit" class="btn btn-success">Enviar</button>
   </form>
 </div>
