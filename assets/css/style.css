@@ -132,3 +132,9 @@ label {
   color: #bebebe;
   cursor: default;
 }
+
+.removable-item {
+  cursor: pointer;
+  color: #bebebe;
+  list-style-type: none;
+}

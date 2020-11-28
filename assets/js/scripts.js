@@ -121,10 +121,13 @@ window.onload = function () {
       document.getElementById('produtos-info').value = JSON.stringify(produtoInfo);
 
       // Adicionar à div.
-      const p = document.createElement('p');
-      p.classList.add('removable-item');
-      p.innerHTML = produtoInfo.titulo;
-      document.getElementById('produtos-list').appendChild(p);
+      const li = document.createElement('li');
+      li.classList.add('removable-item');
+      // Atributos nossos com prefixo data- são suportados pelo HTML nativamente.
+      li.setAttribute('data-id', idProduto);
+      li.innerHTML = this.getElementsByClassName('produto-nome')[0].childNodes[0].nodeValue;
+      li.onclick = handleLiClick;
+      document.getElementById('produtos-list').appendChild(li);
     } else if (this.id.startsWith('enfermeiro')) {
       // Obter ID do enfermeiro a partir do ID do elemento.
       const idEnfermeiro = this.id.replace('enfermeiro-', '');
@@ -139,13 +142,33 @@ window.onload = function () {
       document.getElementById('enfermeiros-info').value = JSON.stringify(enfermeiroInfo);
 
       // Adicionar à div.
-      const p = document.createElement('p');
-      p.classList.add('removable-item');
-      p.innerHTML = this.getElementsByClassName('enfermeiro-nome')[0].childNodes[0].nodeValue;
-      document.getElementById('enfermeiros-list').appendChild(p);
+      const li = document.createElement('li');
+      li.classList.add('removable-item');
+      // Atributos nossos com prefixo data- são suportados pelo HTML nativamente.
+      li.setAttribute('data-id', idEnfermeiro);
+      li.innerHTML = this.getElementsByClassName('enfermeiro-nome')[0].childNodes[0].nodeValue;
+      li.onclick = handleLiClick;
+      document.getElementById('enfermeiros-list').appendChild(li);
     }
 
     // Remover este elemento.
+    this.remove();
+  }
+
+  function handleLiClick() {
+    const id = this.getAttribute('data-id');
+    if (this.parentElement.id === 'produtos-list') {
+      const toSend = JSON.parse(produtoToSend.value);
+      // Remover do JSON.
+      for (const i in toSend) if (toSend[i].id == id) delete toSend[i]
+      produtoToSend.value = JSON.stringify(toSend);
+    } else if (this.parentElement.id === 'enfermeiros-list') {
+      const toSend = JSON.parse(enfermeiroToSend.value);
+      // Remover do JSON.
+      for (const i in toSend) if (toSend[i].id == id) delete toSend[i]
+      enfermeiroToSend.value = JSON.stringify(toSend);
+    }
+    // Remover o elemento.
     this.remove();
   }
 }

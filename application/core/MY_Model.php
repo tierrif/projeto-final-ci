@@ -55,8 +55,8 @@ abstract class MY_Model extends CI_Model {
         return $this->db->update($this->getTable(), $data);
     }
 
-    public function delete($id) {
-        $this->db->where('id', $id);
+    public function delete($id = -1) {
+        if ($id > -1) $this->db->where('id', $id);
         $this->db->delete($this->getTable());
     }
 
@@ -108,7 +108,7 @@ abstract class MY_Model extends CI_Model {
         // Elimina da tabela de registos.
         $this->delete($id);
         // Elimina da tabela das moradas.
-        $this->db->where('id', $id);
+        $this->db->where('id', $idMorada);
         $this->db->delete(self::MORADA_TABLE);
     }
 

@@ -79,6 +79,11 @@ class MY_Controller extends CI_Controller {
         // Nome do controlador.
         $controller = get_class($this);
 
+        if ($id < 0) {
+            show_404();
+            return;
+        }
+
         // Se inserir.
         if ($arg === 'insert') {
             /*

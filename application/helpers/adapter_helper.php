@@ -204,10 +204,9 @@ class ConsultaDetailsAdapter extends SingleItemAdapter {
         return [
             'estado_value' => 'estado',
             'data_value' => 'data',
-            'medico_value' => 'medico/nome',
-            'utente_value' => 'utente/nome',
-            'receita_value' => 'receita',
-            ''
+            'medico_value' => 'medico/id',
+            'utente_value' => 'utente/id',
+            'receita_value' => 'receita'
         ];
     }
 }

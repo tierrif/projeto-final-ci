@@ -35,16 +35,25 @@ class ConsultaModel extends MY_Model {
     public function getByIdWithReplacedKeys($id) {
         // Substituir chaves estrangeiras com objetos.
         $one = $this->replaceForeignKeys($this->getById($id));
-        // Substituir estado por valor booleano.
-        $one['estado'] = arrayValue($one, 'estado') ? true : false;
+        // Substituir estado por atributo checked do HTML.
+        $one['estado'] = arrayValue($one, 'estado') ? 'checked="checked"' : null;
 
         // Retornar.
         return $one;
-        
     }
 
     public function getTable() {
         return 'consulta';
+    }
+
+    public function deleteAlongReceita($id) {
+        // Obtém ID da receita.
+        $idReceita = $this->getById($id)['idReceita'];
+        // Elimina da tabela de registos.
+        $this->delete($id);
+        // Elimina da tabela das receitas.
+        $this->db->where('id', $idReceita);
+        $this->db->delete(parent::RECEITA_TABLE);
     }
 
     private function replaceForeignKeys($one) {

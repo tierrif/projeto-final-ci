@@ -10,7 +10,9 @@ class ConsultasAdmin extends MY_Controller {
             'produtoReceitaModel', 
             'produtoModel', 
             'receitaModel', 
-            'enfermeiroModel'
+            'enfermeiroModel',
+            'utenteModel',
+            'medicoModel'
         ]);
         if (!isLoggedIn() || !hasPermission('edit-consultas', $this->session)) {
             redirect(base_url('noaccess'));
@@ -57,29 +59,39 @@ class ConsultasAdmin extends MY_Controller {
         // Obter todos os produtos e enfermeiros.
         $enfermeiros = $this->enfermeiroModel->getAll();
         $produtos = $this->produtoModel->getAll();
+        $utentes = $this->utenteModel->getAll();
+        $medicos = $this->medicoModel->getAll();
         // Se o pedido for feito pelo form, em POST, não setar $data da base de dados.
         if (!$fromForm) {
             $data = (new ConsultaDetailsAdapter)->adapt($consulta);
             $data['receita_form_include'] = $this->renderer->manualRender('includes/receita_form',
             (new ReceitaDetailsAdapter)->adapt($consulta['receita']));
-            $data['modals_include'] = $this->renderer->manualRender('includes/add_prod_enf_modal', []);
-            $data['produtos_json'] = json_encode($produtos);
-            $data['enfermeiros_json'] = json_encode($enfermeiros);
         } else {
             $data = [
                 'data_value' => set_value('data'),
-                'estado_value' => set_value('estado'),
+                'estado_value' => set_value('estado') ? 'checked="checked"' : null,
                 'medico_value' => set_value('medico'),
                 'utente_value' => set_value('utente'),
-                'receita_form_include' => $this->renderer->manualRender('includes/morada_form', [
+                'receita_form_include' => $this->renderer->manualRender('includes/receita_form', [
                     'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['receita']['id']),
                     'cuidado_value' => set_value('cuidado'),
                     'receita_value' => set_value('receita')
-                ]),
-                'modals_include' => $this->renderer->manualRender('add_prod_enf_modal', []),
-                'produtos_json' => json_encode($produtos),
-                'enfermeiros_json' => json_encode($enfermeiros)
+                ])
             ];
+        }
+
+        // Dados em comum.
+        $data['utentes'] = $utentes;
+        $data['medicos'] = $medicos;
+        $data['produtos_json'] = json_encode($produtos);
+        $data['enfermeiros_json'] = json_encode($enfermeiros);
+        $data['modals_include'] = $this->renderer->manualRender('includes/add_prod_enf_modal', []);
+        // Iterar utentes e médicos para adicionar selected="selected".
+        foreach ($data['medicos'] as &$medico) {
+            if ($data['medico_value'] == $medico['id']) $medico['selected'] = 'selected="selected"';
+        }
+        foreach ($data['utentes'] as &$utente) {
+            if ($data['utente_value'] == $utente['id']) $utente['selected'] = 'selected="selected"';
         }
 
         return $data;
@@ -91,11 +103,6 @@ class ConsultasAdmin extends MY_Controller {
             [
                 'field' => 'data',
                 'label' => 'data',
-                'rules' => 'required'
-            ],
-            [
-                'field' => 'estado',
-                'label' => 'estado',
                 'rules' => 'required'
             ],
             [
@@ -134,7 +141,7 @@ class ConsultasAdmin extends MY_Controller {
         $consulta = [
             'id' => ($id > 0 ? $id : null), // Ao inserir, se ID é nulo, auto-incrementa na BD.
             'data' => $this->input->post('data'),
-            'estado' => $this->input->post('estado'),
+            'estado' => $this->input->post('estado') ? 1 : 0,
             'idMedico' => $this->input->post('medico'),
             'idUtente' => $this->input->post('utente')
         ];
@@ -180,16 +187,16 @@ class ConsultasAdmin extends MY_Controller {
         if ($id > 0) {
             // Atualizar dados pelo model.
             $this->consultaModel->update($consulta);
-            $this->consultaModel->updateReceita($receita);
+            $this->receitaModel->update($receita);
             // Eliminar todas as enfermagens que existem para atualizar.
-            $this->consultaModel->deleteEnfermagensByConsulta($id);
+            $this->enfermagemModel->deleteEnfermagensByConsulta($id);
             // Iterar todas as novas enfermagens.
             foreach ($enfermagens as $enfermagem) {
                 // Adicionar a nova enfermagem.
                 $this->enfermagemModel->add($enfermagem);
             }
             // Eliminar todos os produtosreceitas que existem para atualizar.
-            $this->consultaModel->deleteProdutosReceitasByReceita($this->input->post('idreceita'));
+            $this->produtoReceitaModel->deleteProdutosReceitasByReceita($this->input->post('idreceita'));
             // Iterar todos os novos produtosreceitas.
             foreach ($produtoreceitas as $pr) {
                 // Adicionar o novo produtoreceita.
