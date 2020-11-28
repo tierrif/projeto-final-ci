@@ -1,0 +1,25 @@
+<div class="container">
+  <table class="table table-striped table-dark table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Estado</th>
+        <th scope="col">Médico</th>
+        <th scope="col">Utente</th>
+        <th scope="col">Receita</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#consultas}}
+      <tr>
+        <td>{{&estado}}</td>
+        <td>{{ medico }}</td>
+        <td>{{ utente }}</td>
+        <td>{{&receita}}</td>
+      </tr>
+      {{/consultas}}
+    </tbody>
+  </table>
+  <div class="paginacao">
+    {{&pagination}}
+  </div>
+</div>

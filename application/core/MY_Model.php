@@ -1,7 +1,16 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 abstract class MY_Model extends CI_Model {
-    private $moradaTable = 'morada';
+    const CONSULTA_TABLE = 'consulta';
+    const CONTACTO_TABLE = 'contacto';
+    const ENFERMAGEM_TABLE = 'enfermagem';
+    const ENFERMEIRO_TABLE = 'enfermeiro';
+    const MEDICO_TABLE = 'medico';
+    const MORADA_TABLE = 'morada';
+    const PRODUTO_TABLE = 'produto';
+    const PRODUTO_RECEITA_TABLE = 'produtoreceita';
+    const RECEITA_TABLE = 'receita';
+    const UTENTE_TABLE = 'utente';
 
     /*
      * Obter o número de valores total.
@@ -55,18 +64,18 @@ abstract class MY_Model extends CI_Model {
 
     public function getMoradaById($id) {
         // Obter uma morada através de $id.
-        $query = $this->db->get_where($this->moradaTable, ['id' => $id]);
+        $query = $this->db->get_where(self::MORADA_TABLE, ['id' => $id]);
         // Retornar o resultado, em formato de array para que seja iterável.
         return $query->row_array();
     }
 
     public function updateMorada($data) {
         $this->db->where('id', $data['id']);
-        return $this->db->update($this->moradaTable, $data);
+        return $this->db->update(self::MORADA_TABLE, $data);
     }
 
     public function addMorada($data) {
-        $this->db->insert($this->moradaTable, $data);
+        $this->db->insert(self::MORADA_TABLE, $data);
         return $this->db->insert_id();
     }
 
@@ -98,7 +107,7 @@ abstract class MY_Model extends CI_Model {
         $this->delete($id);
         // Elimina da tabela das moradas.
         $this->db->where('id', $id);
-        $this->db->delete($this->moradaTable);
+        $this->db->delete(self::MORADA_TABLE);
     }
 
     /*

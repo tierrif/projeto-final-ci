@@ -26,55 +26,17 @@ abstract class Adapter {
      * do adaptador respetivo, delimitado
      * pelo método abstrato toAdapt().
      */
-    public function adapt($originalContent) {
-        $toReturn = [];
-        // Primeiro iterar o array original.
-        foreach ($originalContent as $item) {
-            // Inicializar array adaptado.
-            $adaptedArray = [];
-            // Iterar.
-            foreach ($this->toAdapt() as $key => $value) {
-                if (is_numeric($key)) $key = $value; // No caso de ser elemento simples.
-                // Transformar a string, fazendo com que possamos iterar o que está ao lado de '/'.
-                $split = explode('/', $value);
-                // A primeira posição. Será atualizada em cada nível.
-                $pos = arrayValue($item, $split[0]);
-                // Variável de controlo para prevenir repetição do primeiro elemento.
-                $i = 0;
-                foreach ($split as $element) {
-                    // Se não existirem barras, isto não é necessário.
-                    if (count($split) === 1) break;
-                    // Prevenir repetição do primeiro elemento.
-                    if ($i++ === 0) continue;
-                    // Atualizar o array com novo nível.
-                    $pos = arrayValue($pos, $element);
-                    // Se for nulo, adicionar valor por defeito.
-                    if ($pos === null) $pos = DEFAULT_VALUE;
-                }
-                $adaptedArray[$key] = $pos;
-            }
-            $toReturn[] = $adaptedArray;
-        }
-        // Retornar o array adaptado.
-        return $toReturn;
-    }
-}
+    public abstract function adapt($originalContent);
 
-/*
- * Adapter para apenas um item. Adapter é
- * por defeito para listas.
- */
-abstract class SingleItemAdapter extends Adapter {
-    public function adapt($originalContent) {
-        // Inicializar array adaptado.
-        $adaptedArray = [];
+    protected function iterateItem($item) {
+        $toReturn = [];
         // Iterar.
         foreach ($this->toAdapt() as $key => $value) {
             if (is_numeric($key)) $key = $value; // No caso de ser elemento simples.
             // Transformar a string, fazendo com que possamos iterar o que está ao lado de '/'.
             $split = explode('/', $value);
             // A primeira posição. Será atualizada em cada nível.
-            $pos = arrayValue($originalContent, $split[0]);
+            $pos = arrayValue($item, $split[0]);
             // Variável de controlo para prevenir repetição do primeiro elemento.
             $i = 0;
             foreach ($split as $element) {
@@ -87,13 +49,42 @@ abstract class SingleItemAdapter extends Adapter {
                 // Se for nulo, adicionar valor por defeito.
                 if ($pos === null) $pos = DEFAULT_VALUE;
             }
-            $adaptedArray[$key] = $pos;
+            $toReturn[$key] = $pos;
         }
-        return $adaptedArray;
+
+        // Retornar.
+        return $toReturn;
     }
 }
 
-class PessoaSimplesAdapter extends Adapter {
+/*
+ * Adapter para listas.
+ */
+abstract class CollectionAdapter extends Adapter {
+    public function adapt($originalContent) {
+        $toReturn = [];
+        // Primeiro iterar o array original.
+        foreach ($originalContent as $item) {
+            // Iterar e adicionar ao array a retornar.
+            $toReturn[] = $this->iterateItem($item);
+        }
+        // Retornar o array adaptado.
+        return $toReturn;
+    }
+}
+
+/*
+ * Adapter para apenas um item. CollectionAdapter é
+ * para listas.
+ */
+abstract class SingleItemAdapter extends Adapter {
+    public function adapt($originalContent) {
+        // Retornar.
+        return $this->iterateItem($originalContent);
+    }
+}
+
+class PessoaSimplesAdapter extends CollectionAdapter {
     public function toAdapt() {
         return [
             'nome',
@@ -102,7 +93,7 @@ class PessoaSimplesAdapter extends Adapter {
     }
 }
 
-class UtenteAdminAdapter extends Adapter {
+class UtenteAdminAdapter extends CollectionAdapter {
     public function toAdapt() {
         return [
             'nome',
@@ -138,7 +129,7 @@ class MoradaDetailsAdapter extends SingleItemAdapter {
     }
 }
 
-class EnfermeiroAdminAdapter extends Adapter {
+class EnfermeiroAdminAdapter extends CollectionAdapter {
     public function toAdapt() {
         return [
             'nome',
@@ -161,7 +152,7 @@ class EnfermeiroDetailsAdapter extends SingleItemAdapter {
     }
 }
 
-class MedicoAdminAdapter extends Adapter {
+class MedicoAdminAdapter extends CollectionAdapter {
     public function toAdapt() {
         return [
             'nome',
@@ -180,6 +171,17 @@ class MedicoDetailsAdapter extends SingleItemAdapter {
             'nif_value' => 'nif',
             'nib_value' => 'nib',
             'especialidade_value' => 'especialidade'
+        ];
+    }
+}
+
+class ConsultaSimplesAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'estado',
+            'medico' => 'medico/nome',
+            'utente' => 'utente/nome',
+            'receita' 
         ];
     }
 }

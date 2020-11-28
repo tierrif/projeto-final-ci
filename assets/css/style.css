@@ -119,3 +119,16 @@ label {
 .modal-wider {
   max-width: 1000px;
 }
+
+.red {
+  color: rgb(172, 0, 0);
+}
+
+.green {
+  color: rgb(0, 126, 0);
+}
+
+.gray-default-cursor {
+  color: #bebebe;
+  cursor: default;
+}

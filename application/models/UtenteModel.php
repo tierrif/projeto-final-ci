@@ -1,15 +1,13 @@
 <? defined('BASEPATH') or exit('No direct script access allowed');
 
 class UtenteModel extends MY_Model {
-    private $consultaTable = 'consulta';
-
     public function getTable() {
         return 'utente';
     }
 
     public function getConsultas($utenteId) {
         // Obter todas as consultas deste utente.
-        $query = $this->db->get_where($this->consultaTable, ['idUtente' => $utenteId]);
+        $query = $this->db->get_where(parent::CONSULTA_TABLE, ['idUtente' => $utenteId]);
         // Retornar o resultado, em formato de array para que seja iterável.
         return $query->result_array();
     }
