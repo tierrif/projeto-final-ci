@@ -17,7 +17,7 @@ class UtentesAdmin extends MY_Controller {
      */
     public function index() {
         // Obter a página atual.
-        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $page = ($this->uri->segment(URI_SEGMENT)) ? $this->uri->segment(URI_SEGMENT) : 0;
         // Configuração da paginação.
         $config['base_url'] = base_url('UtentesAdmin/index');
         $config['total_rows'] = $this->utenteModel->getCount();
