@@ -5,11 +5,13 @@ class ConsultasAdmin extends MY_Controller {
         parent::__construct();
         $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
         $this->load->library(['pagination', 'form_validation']);
-        $this->load->model('consultaModel');
-        $this->load->model('enfermagemModel');
-        $this->load->model('produtoReceitaModel');
-        $this->load->model('produtoModel');
-        $this->load->model('receitaModel');
+        $this->load->model(['consultaModel', 
+            'enfermagemModel', 
+            'produtoReceitaModel', 
+            'produtoModel', 
+            'receitaModel', 
+            'enfermeiroModel'
+        ]);
         if (!isLoggedIn() || !hasPermission('edit-consultas', $this->session)) {
             redirect(base_url('noaccess'));
         }
@@ -29,7 +31,7 @@ class ConsultasAdmin extends MY_Controller {
         $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
         // Inicializar a paginação.
         $this->pagination->initialize($config);
-        $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getAllWithReceita($config['per_page'], $page, 'ConsultasAdmin'));
+        $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getAllWithReplacedKeys($config['per_page'], $page, 'ConsultasAdmin'));
         $data['pagination'] = $this->pagination->create_links();
         $data['consulta_form'] = $this->renderer->manualRender('details/consulta', [
             'morada_form_include' => $this->renderer->manualRender('includes/morada_form', []),
@@ -51,25 +53,32 @@ class ConsultasAdmin extends MY_Controller {
      */
     protected function onDetailsRender($id, $fromForm) {
         // Dados dinâmicos a renderizar no mustache.
-        $consulta = $this->consultaModel->getById($id);
+        $consulta = $this->consultaModel->getByIdWithReplacedKeys($id);
+        // Obter todos os produtos e enfermeiros.
+        $enfermeiros = $this->enfermeiroModel->getAll();
+        $produtos = $this->produtoModel->getAll();
         // Se o pedido for feito pelo form, em POST, não setar $data da base de dados.
         if (!$fromForm) {
             $data = (new ConsultaDetailsAdapter)->adapt($consulta);
             $data['receita_form_include'] = $this->renderer->manualRender('includes/receita_form',
-            (new ReceitaDetailsAdapter)->adapt($this->consultaModel->getReceitaById($consulta['idMorada'])));
+            (new ReceitaDetailsAdapter)->adapt($consulta['receita']));
+            $data['modals_include'] = $this->renderer->manualRender('includes/add_prod_enf_modal', []);
+            $data['produtos_json'] = json_encode($produtos);
+            $data['enfermeiros_json'] = json_encode($enfermeiros);
         } else {
             $data = [
                 'data_value' => set_value('data'),
                 'estado_value' => set_value('estado'),
                 'medico_value' => set_value('medico'),
                 'utente_value' => set_value('utente'),
-                'enfermeiros_value' => set_value('enfermeiros'), // JSON.
                 'receita_form_include' => $this->renderer->manualRender('includes/morada_form', [
-                    'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['idMorada']),
+                    'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['receita']['id']),
                     'cuidado_value' => set_value('cuidado'),
-                    'receita_value' => set_value('receita'),
-                    'produtos_value' => set_value('produtos') // JSON.
-                ])
+                    'receita_value' => set_value('receita')
+                ]),
+                'modals_include' => $this->renderer->manualRender('add_prod_enf_modal', []),
+                'produtos_json' => json_encode($produtos),
+                'enfermeiros_json' => json_encode($enfermeiros)
             ];
         }
 
@@ -136,7 +145,7 @@ class ConsultasAdmin extends MY_Controller {
         ];
         $enfermagens = [];
         // Se passado, enfermeiros está em JSON.
-        if ($this->input->post('enfermeiros')) {
+        if ($this->input->post('enfermeiros_tosend')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('enfermeiros'), true);
             // O JSON passado é um array. Iterá-lo.
@@ -150,7 +159,7 @@ class ConsultasAdmin extends MY_Controller {
         $produtoreceitas = [];
         $produtos = [];
         // Se passado, produtos está em JSON.
-        if ($this->input->post('produtos')) {
+        if ($this->input->post('produtos_tosend')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('enfermeiros'), true);
             // O JSON passado é um array. Iterá-lo.
@@ -230,7 +239,7 @@ class ConsultasAdmin extends MY_Controller {
     }
 
     protected function getTemplateName() {
-        return 'enfermeiro';
+        return 'consulta';
     }
 
     protected function temporaryData() {

@@ -24,8 +24,10 @@ abstract class MY_Model extends CI_Model {
      * Obter todos os valores num
      * array.
      */
-    public function getAll($limit, $start) {
-        $this->db->limit($limit, $start);
+    public function getAll($limit = -1, $start = -1) {
+        if (!($limit === -1 || $start === -1)) {
+            $this->db->limit($limit, $start);
+        }
         $query = $this->db->get($this->getTable());
         return $query->result_array();
     }

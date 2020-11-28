@@ -185,3 +185,38 @@ class ConsultaSimplesAdapter extends CollectionAdapter {
         ];
     }
 }
+
+class ConsultaAdminAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'estado_value' => 'estado',
+            'data_value' => 'data',
+            'medico_value' => 'medico/nome',
+            'utente_value' => 'utente/nome',
+            'receita_value' => 'receita',
+            'detalhes_uri'
+        ];
+    }
+}
+
+class ConsultaDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'estado_value' => 'estado',
+            'data_value' => 'data',
+            'medico_value' => 'medico/nome',
+            'utente_value' => 'utente/nome',
+            'receita_value' => 'receita',
+            ''
+        ];
+    }
+}
+
+class ReceitaDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'cuidado_value' => 'cuidado',
+            'receita_value' => 'receita'
+        ];
+    }
+} 

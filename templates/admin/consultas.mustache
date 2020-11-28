@@ -1,0 +1,72 @@
+<div class="container">
+  <table class="table table-striped table-dark table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Médico</th>
+        <th scope="col">Utente</th>
+        <th scope="col">Receita</th>
+        <th scope="col">Detalhes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#consultas}}
+      <tr>
+        <td>{{ data_value }}</td>
+        <td>{{&estado_value}}</td>
+        <td>{{ medico_value }}</td>
+        <td>{{ utente_value }}</td>
+        <td>{{&receita_value}}</td>
+        <td><a class="table-link" href="{{ detalhes_uri }}">Detalhes</a></td>
+      </tr>
+      {{/consultas}}
+    </tbody>
+  </table>
+  <button
+    type="button"
+    class="btn btn-warning"
+    data-toggle="modal"
+    data-target="#insertModal"
+  >
+    Agendar consulta
+  </button>
+  <div
+    class="modal fade"
+    id="insertModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="insertModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-wider" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="insertModalLabel">Detalhes sobre a consulta</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Cancelar"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{&consulta_form}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+          <button id="insert-btn" type="submit" class="btn btn-success" role="button">
+            Agendar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="paginacao">
+    {{&pagination}}
+  </div>
+</div>
