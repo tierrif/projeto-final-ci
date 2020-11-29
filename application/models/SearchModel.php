@@ -16,7 +16,6 @@ class SearchModel extends CI_Model {
             $content = strtolower($content);
         }
         $this->db->where($column, $content);
-        // TODO: limitar através de config.
         return $this->db->get($table)->result_array();
     }
 }

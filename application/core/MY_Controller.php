@@ -299,6 +299,7 @@ class Renderer {
                     'ConsultasAdmin' => 'Consultas Admin',
                     'UtentesAdmin' => 'Utentes Admin',
                     'EnfermeirosAdmin' => 'Enfermeiros Admin',
+                    'MedicosAdmin' => 'Médicos Admin',
                     'produtos' => 'Produtos'
                 ];
             } else {
@@ -311,9 +312,6 @@ class Renderer {
             if ($this->authModel->hasPermission('admin') && !$admin) {
                 $controllers['admin'] = 'Espaço admin';
             }
-            // TODO: se tem login, botão é logout, senão é login.
-            $loginButtonUri = '';
-            $loginButtonText = '';
             // Definir o array associativo navData.
             $navData = [
                 'home_url' => base_url(),

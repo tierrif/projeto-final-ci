@@ -125,10 +125,10 @@ class ConsultasAdmin extends MY_Controller {
                     'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['receita']['id']),
                     'cuidado_value' => set_value('cuidado'),
                     'receita_value' => set_value('receita'),
-                    'link-class' => arrayValue($consulta['receita'], 'document') ? 'table-link' : 'disabled-link'
+                    'link-class' => (arrayValue($consulta['receita'], 'document') ? 'table-link' : 'disabled-link'),
                 ]),
                 'enfermeiros_tosend' => set_value('enfermeiros'),
-                'produtos_tosend' => set_value('produtos'),
+                'produtos_tosend' => set_value('produtos')
             ];
         }
 
