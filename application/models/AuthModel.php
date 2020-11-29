@@ -10,6 +10,21 @@ class AuthModel extends MY_Model {
         ];
     }
 
+    public function getAllWithDetails() {
+        $all = $this->getAll();
+        foreach ($all as &$one) {
+            $one['detalhes_uri'] = base_url('ContasAdmin/details/' . $one['id']);
+            $one['permissions'] = implode(',', unserialize($one['permissions']));
+        }
+        return $all;
+    }
+
+    public function getByIdWithDetails($id) {
+        $one = $this->getById($id);
+        // $one['permissions'] = implode(',', unserialize($one['permissions']));
+        return $one;
+    }
+
     public function checkPassword($usr, $pwd) {
         print_r(hash('sha256', $pwd));
         return $this->getByUsername($usr)['password'] === hash('sha256', $pwd);

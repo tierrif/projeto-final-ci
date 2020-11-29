@@ -24,7 +24,7 @@ class ContasAdmin extends MY_Controller {
         $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
         // Inicializar a paginação.
         $this->pagination->initialize($config);
-        $data['contas'] = (new ContaAdminAdapter)->adapt($this->authModel->getAll($config['per_page'], $page));
+        $data['contas'] = (new ContaAdminAdapter)->adapt($this->authModel->getAllWithDetails($config['per_page'], $page));
         $data['pagination'] = $this->pagination->create_links();
         $data['conta_form'] = $this->renderer->manualRender('details/conta', [
             'action_uri' => base_url('ContasAdmin/details/-1/insert')
@@ -45,11 +45,13 @@ class ContasAdmin extends MY_Controller {
      */
     protected function onDetailsRender($id, $fromForm) {
         // Dados dinâmicos a renderizar no mustache.
-        $conta = $this->authModel->getById($id);
+        $conta = $this->authModel->getByIdWithDetails($id);
         // Se o pedido for feito pelo form, em POST, não setar $data da base de dados.
-        if (!$fromForm) $data = (new ContaDetailsAdapter)->adapt($conta);
-        else $data = ['username' => set_value('nome'), 'permissions' => set_value('permissions')];
-        $data['permissions'] = implode(',', unserialize($data['permissions']));
+        if (!$fromForm) {
+          $data = (new ContaDetailsAdapter)->adapt($conta);
+          $data['permissions_value'] = implode(',', unserialize($data['permissions_value']));
+        } else $data = ['username_value' => set_value('username'), 'permissions_value' => set_value('permissions')];
+          
         return $data;
     }
 
@@ -74,38 +76,25 @@ class ContasAdmin extends MY_Controller {
             'id' => ($id > 0 ? $id : null), // Ao inserir, se ID é nulo, auto-incrementa na BD.
             'username' => $this->input->post('username'),
             'password' => hash('sha256', $this->input->post('password')),
-            'nif' => $this->input->post('nif'),
-            'nib' => $this->input->post('nib') 
-        ];
-        $morada = [
-            'id' => ($id > 0 ? $this->input->post('idmorada') : null),
-            'firstLine' => $this->input->post('morada'),
-            'secondLine' => $this->input->post('morada2'),
-            'zipCode' => $this->input->post('codpostal'),
-            'state' => $this->input->post('estado'),
-            'city' => $this->input->post('cidade')
+            'permissions' => serialize(explode(',', $this->input->post('permissions')))
         ];
 
-        // Verificar se o enfermeiro existe. Se sim, atualizar dados.
+        // Verificar se a conta existe. Se sim, atualizar dados.
         if ($id > 0) {
             // Atualizar dados pelo model.
-            $this->authModel->update($enfermeiro);
-            $this->authModel->updateMorada($morada);
+            $this->authModel->update($conta);
             // Já atualizámos, o código seguinte apenas serve para inserir.
             return $id;
         }
 
-        // Inserir dados pelo model.
-        $moradaId = $this->authModel->addMorada($morada);
-        $enfermeiro['idMorada'] = $moradaId;
-        $newId = $this->authModel->add($enfermeiro);
+        $newId = $this->authModel->add($conta);
 
         // Retornar o ID.
         return $newId;
     }
 
     protected function getTemplateName() {
-        return 'enfermeiro';
+        return 'conta';
     }
 
     protected function temporaryData() {

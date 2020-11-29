@@ -241,4 +241,23 @@ class ProdutoJsonAdapter extends CollectionAdapter {
             'descricao'
         ];
     }
+} 
+
+class ContaAdminAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'username',
+            'permissions',
+            'detalhes_uri'
+        ];
+    }
+}
+
+class ContaDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'username_value' => 'username',
+            'permissions_value' => 'permissions'
+        ];
+    }
 }

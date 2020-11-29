@@ -300,6 +300,7 @@ class Renderer {
                     'UtentesAdmin' => 'Utentes Admin',
                     'EnfermeirosAdmin' => 'Enfermeiros Admin',
                     'MedicosAdmin' => 'Médicos Admin',
+                    'ContasAdmin' => 'Gerir Contas',
                     'produtos' => 'Produtos'
                 ];
             } else {
