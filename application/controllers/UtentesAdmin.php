@@ -57,6 +57,7 @@ class UtentesAdmin extends MY_Controller {
             $data = [
                 'nome_value' => set_value('nome'),
                 'num_utente_value' => set_value('numutente'),
+                'bar' => $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]),
                 'morada_form_include' => $this->renderer->manualRender('includes/morada_form', [
                     'id_morada' => (set_value('idmorada') ? set_value('idmorada') : $utente['idMorada']),
                     'morada_linha_1_value' => set_value('morada'),

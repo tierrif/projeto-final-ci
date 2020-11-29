@@ -7,7 +7,7 @@ class EnfermeirosAdmin extends MY_Controller {
         $this->load->library(['pagination', 'form_validation']);
         $this->load->model('enfermeiroModel');
         if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('manage-entities')) {
-            redirect(base_url('NoAccess'));
+            redirect(base_url('noaccess'));
         }
     }
 
@@ -59,6 +59,7 @@ class EnfermeirosAdmin extends MY_Controller {
                 'especialidade_value' => set_value('especialidade'),
                 'nif_value' => set_value('nif'),
                 'nib_value' => set_value('nib'),
+                'bar' => $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]),
                 'morada_form_include' => $this->renderer->manualRender('includes/morada_form', [
                     'id_morada' => (set_value('idmorada') ? set_value('idmorada') : $enfermeiro['idMorada']),
                     'morada_linha_1_value' => set_value('morada'),

@@ -52,6 +52,8 @@ class ProdutosAdmin extends MY_Controller {
           $data = (new ProdutoDetailsAdapter)->adapt($produto);
         } else $data = ['titulo_value' => set_value('titulo'), 'descricao_value' => set_value('descricao')];
           
+        $data['bar'] = $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]);
+
         return $data;
     }
 

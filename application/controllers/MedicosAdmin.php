@@ -59,6 +59,7 @@ class MedicosAdmin extends MY_Controller {
                 'especialidade_value' => set_value('especialidade'),
                 'nif_value' => set_value('nif'),
                 'nib_value' => set_value('nib'),
+                'bar' => $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]),
                 'morada_form_include' => $this->renderer->manualRender('includes/morada_form', [
                     'id_morada' => (set_value('idmorada') ? set_value('idmorada') : $medico['idMorada']),
                     'morada_linha_1_value' => set_value('morada'),

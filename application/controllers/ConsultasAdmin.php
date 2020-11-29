@@ -139,6 +139,7 @@ class ConsultasAdmin extends MY_Controller {
         // Dados em comum.
         $data['utentes'] = $utentes;
         $data['medicos'] = $medicos;
+        $data['bar'] = $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]);
         $data['produtos_json'] = json_encode((new ProdutoJsonAdapter)->adapt($produtos));
         $data['enfermeiros_json'] = json_encode((new EnfermeiroJsonAdapter)->adapt($enfermeiros));
         $data['modals_include'] = $this->renderer->manualRender('includes/add_prod_enf_modal', []);

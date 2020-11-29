@@ -52,6 +52,8 @@ class ContasAdmin extends MY_Controller {
           $data['permissions_value'] = implode(',', unserialize($data['permissions_value']));
         } else $data = ['username_value' => set_value('username'), 'permissions_value' => set_value('permissions')];
           
+        $data['bar'] = $this->renderer->manualRender('includes/bar', ['base_controller' => base_url(get_class($this))]);
+
         return $data;
     }
 

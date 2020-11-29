@@ -54,6 +54,4 @@ class Mensagens extends MY_Controller {
         // Elimina.
         $this->mensagemModel->delete($id);
     }
-
-    
 }
