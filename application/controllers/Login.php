@@ -40,4 +40,9 @@ class Login extends MY_Controller {
         }
         $this->renderer->render('login', $data);
     }
+
+    public function logout() {
+        $this->session->set_userdata('token', null);
+        redirect(base_url('Base'));
+    }
 }

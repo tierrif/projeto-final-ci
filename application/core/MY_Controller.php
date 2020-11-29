@@ -316,7 +316,9 @@ class Renderer {
                 'home_url' => base_url(),
                 'login_button_uri' => $loginButtonUri,
                 'login_button_text' => $loginButtonText,
-                'search_context' => base_url($this->uri->segment(1) . '/search')
+                'search_context' => base_url($this->uri->segment(1) . '/search'),
+                'login_uri' => $this->authModel->isLoggedIn() ? base_url('Login/logout') : base_url('Login'),
+                'login_text' => $this->authModel->isLoggedIn() ? 'Logout' : 'Login'
             ];
             foreach ($controllers as $controller => $text) {
                 $navData['nav_elements'][] = [

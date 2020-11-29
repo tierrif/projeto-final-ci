@@ -17,7 +17,9 @@ class AuthModel extends MY_Model {
 
     public function createSession($usr) {
         $this->db->where('username', $usr);
-        $this->db->update($this->getTable(), ['session' => hash('sha256', time())]);
+        $sess = hash('sha256', time();
+        $this->db->update($this->getTable(), ['session' => $sess]);
+        $this->session->set_userdata('token', $sess);
     }
 
     public function getBySession($sess) {
