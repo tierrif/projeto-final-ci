@@ -18,7 +18,7 @@ class Login extends MY_Controller {
         ];
         if ($fromForm) {
             $this->form_validation->set_rules('username', 'username', 'required');
-            $this->form_validation->set_rules('passwird', 'password', 'required');
+            $this->form_validation->set_rules('password', 'password', 'required');
             // Eliminar tags <p> do validation_errors().
             $this->form_validation->set_error_delimiters('', '');
             if ($this->form_validation->run()) {

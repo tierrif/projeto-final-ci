@@ -2,6 +2,7 @@
 
 class AuthModel extends MY_Model {
     public function checkPassword($usr, $pwd) {
+        print_r(hash('sha256', $pwd));
         return $this->getByUsername($usr)['password'] === hash('sha256', $pwd);
     }
 
@@ -10,6 +11,7 @@ class AuthModel extends MY_Model {
     }
 
     public function isLoggedIn() {
+        if (!$this->session->userdata('token')) return false;
         return $this->getBySession($this->session->userdata('token')) != null;
     }
 
