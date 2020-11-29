@@ -53,6 +53,21 @@ window.onload = function () {
     search('enfermeiro', enfermeiroInfo, 'nome', enfermeiroToSend, this);
   }
 
+  // Criar produto.
+  document.getElementById('create-produto').onclick = function () {
+    const titulo = document.getElementById('produto-titulo-input');
+    const descricao = document.getElementById('produto-descricao-input');
+    const toSend = JSON.parse(produtoToSend.value.replace(/&quot;/g, '"'));
+    // Adicionar ao objeto a informação deste produto.
+    toSend.push({
+      titulo: titulo.value,
+      descricao: descricao.value
+    })
+    produtoToSend.value = JSON.stringify(toSend);
+    addToList(-1, 'produto', titulo.value);
+    return false; // Não submeter o form.
+  }
+
   function search(type, info, toSearchOn, toSend, context) {
     // Eliminar todos os resultados da tabela primeiro.
     const results = document.getElementById(type + '-results');
@@ -137,7 +152,7 @@ window.onload = function () {
       const toSend = JSON.parse(enfermeiroToSend.value.replace(/&quot;/g, '"'));
 
       // Adicionar ao objeto a informação deste enfermeiro.
-      toSend.push({ 
+      toSend.push({
         id: idEnfermeiro,
         nome: nome
       });
@@ -183,7 +198,7 @@ window.onload = function () {
 
   function reloadSearch() {
     search('enfermeiro', enfermeiroInfo, 'nome', enfermeiroToSend, { value: '' });
-    search('produto', produtoInfo, 'nome', produtoToSend, { value: '' })
+    search('produto', produtoInfo, 'titulo', produtoToSend, { value: '' })
   }
 
   function addToList(id, type, content) {

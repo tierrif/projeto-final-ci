@@ -67,7 +67,9 @@ class ConsultasAdmin extends MY_Controller {
             $data['receita_form_include'] = $this->renderer->manualRender('includes/receita_form',
             (new ReceitaDetailsAdapter)->adapt($consulta['receita']));
             $data['enfermeiros_tosend'] = json_encode((new EnfermeiroJsonAdapter)->adapt($consulta['enfermeiros']));
+            if (!$consulta['enfermeiros']) $data['enfermeiros_tosend'] = '[]';
             $data['produtos_tosend'] = json_encode((new ProdutoJsonAdapter)->adapt($consulta['receita']['produtos']));
+            if (!$consulta['receita']['produtos']) $data['produtos_tosend'] = '[]';
         } else {
             $data = [
                 'data_value' => set_value('data'),
@@ -176,7 +178,7 @@ class ConsultasAdmin extends MY_Controller {
         // Se passado, produtos está em JSON.
         if ($this->input->post('produtos')) {
             // Passar de JSON para array associativo.
-            $decoded = json_decode($this->input->post('enfermeiros'), true);
+            $decoded = json_decode($this->input->post('produtos'), true);
             // O JSON passado é um array. Iterá-lo.
             foreach ($decoded as $produto) {
                 $produtoreceitas[] = [
@@ -203,22 +205,25 @@ class ConsultasAdmin extends MY_Controller {
                 // Adicionar a nova enfermagem.
                 $this->enfermagemModel->add($enfermagem);
             }
+            // Índices de produtos e produtoreceitas são sincronizados.
+            $i = 0;
+            // Iterar todos os produtos.
+            foreach ($produtos as $produto) {
+                if (arrayValue($produto, 'id') != null && $produto['id'] > 0) {
+                    // Atualizar se já existe.
+                    $this->produtoModel->update($produto);
+                    continue;
+                }
+                // Não existe, por isso, inserir.
+                $id = $this->produtoModel->add($produto);
+                $produtoreceitas[$i++]['idProduto'] = $id;
+            }
             // Eliminar todos os produtosreceitas que existem para atualizar.
             $this->produtoReceitaModel->deleteProdutosReceitasByReceita($this->input->post('idreceita'));
             // Iterar todos os novos produtosreceitas.
             foreach ($produtoreceitas as $pr) {
                 // Adicionar o novo produtoreceita.
                 $this->produtoReceitaModel->add($pr);
-            }
-            // Iterar todos os produtos.
-            foreach ($produtos as $produto) {
-                if (arrayValue($produto, 'id')) {
-                    // Atualizar se já existe.
-                    $this->produtoModel->update($produto);
-                    continue;
-                }
-                // Não existe, por isso, inserir.
-                $this->produtoModel->add($produto);
             }
             // Já atualizámos, o código seguinte apenas serve para inserir.
             return $id;

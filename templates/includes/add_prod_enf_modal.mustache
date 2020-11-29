@@ -133,6 +133,28 @@
             <tbody id="produto-results"></tbody>
           </table>
         </div>
+        <h5>Se o produto não existe, crie-o</h5>
+        <div class="form-group">
+          <label for="produto-titulo">Título</label>
+          <input
+            type="text"
+            class="form-control"
+            id="produto-titulo-input"
+            placeholder="Título..."
+          />
+        </div>
+        <div class="form-group">
+          <label for="produto-descricao">Descrição</label>
+          <input
+            type="text"
+            class="form-control"
+            id="produto-descricao-input"
+            placeholder="Descrição..."
+          />
+        </div>
+        <button id="create-produto" class="btn btn-success">
+          Criar e adicionar
+        </button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-warning" data-dismiss="modal">
@@ -154,7 +176,7 @@
   type="button"
   class="btn btn-outline-warning"
   data-toggle="modal"
-  data-target="#enfermeiroModal"
+  data-target="#produtoModal"
 >
   Adicionar produto
 </button>
