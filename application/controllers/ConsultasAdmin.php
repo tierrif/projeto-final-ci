@@ -165,12 +165,14 @@ class ConsultasAdmin extends MY_Controller {
         if ($this->input->post('enfermeiros')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('enfermeiros'), true);
-            // O JSON passado é um array. Iterá-lo.
-            foreach ($decoded as $enfermeiro) {
-                $enfermagens[] = [
-                    'idEnfermeiro' => $enfermeiro['id'],
-                    'idConsulta' => $id
-                ];
+            if ($decoded) {
+                // O JSON passado é um array. Iterá-lo.
+                foreach ($decoded as $enfermeiro) {
+                    $enfermagens[] = [
+                        'idEnfermeiro' => $enfermeiro['id'],
+                        'idConsulta' => $id
+                    ];
+                }
             }
         }
         $produtoreceitas = [];
@@ -179,18 +181,21 @@ class ConsultasAdmin extends MY_Controller {
         if ($this->input->post('produtos')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('produtos'), true);
-            // O JSON passado é um array. Iterá-lo.
-            foreach ($decoded as $produto) {
-                $produtoreceitas[] = [
-                    'idProduto' => arrayValue($produto, 'id'),
-                    'idReceita' => $this->input->post('idreceita')
-                ];
-                $produtos[] = [
-                    'id' => arrayValue($produto, 'id'),
-                    'titulo' => arrayValue($produto, 'titulo'),
-                    'descricao' => arrayValue($produto, 'descricao')
-                ];
+            if ($decoded) {
+                // O JSON passado é um array. Iterá-lo.
+                foreach ($decoded as $produto) {
+                    $produtoreceitas[] = [
+                        'idProduto' => arrayValue($produto, 'id'),
+                        'idReceita' => $this->input->post('idreceita')
+                    ];
+                    $produtos[] = [
+                        'id' => arrayValue($produto, 'id'),
+                        'titulo' => arrayValue($produto, 'titulo'),
+                        'descricao' => arrayValue($produto, 'descricao')
+                    ];
+                }
             }
+            
         }
 
         // Verificar se a consulta existe. Se sim, atualizar dados.

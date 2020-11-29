@@ -30,6 +30,10 @@ window.onload = function () {
     tr.onclick = handleTrClick;
   }
 
+  // Traduzir caracteres com escape.
+  produtoToSend.value = produtoToSend.value.replace(/&quot;/g, '"');
+  enfermeiroToSend.value = enfermeiroToSend.value.replace(/&quot;/g, '"');
+
   // Preencher toSend com informação das variáveis JSON info.
   for (const enfermeiro of JSON.parse(enfermeiroToSend.value.replace(/&quot;/g, '"'))) {
     addToList(enfermeiro.id, 'enfermeiro', enfermeiro.nome);
@@ -143,7 +147,7 @@ window.onload = function () {
       document.getElementById('produtos-info').value = JSON.stringify(produtoInfo);
 
       // Adicionar à div.
-      addToList(idProduto, 'produto', this.getElementsByClassName('produto-nome')[0].childNodes[0].nodeValue);
+      addToList(idProduto, 'produto', this.getElementsByClassName('produto-titulo')[0].childNodes[0].nodeValue);
     } else if (this.id.startsWith('enfermeiro')) {
       // Obter ID do enfermeiro a partir do ID do elemento.
       const idEnfermeiro = this.id.replace('enfermeiro-', '');
