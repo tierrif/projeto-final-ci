@@ -305,7 +305,7 @@ class Renderer {
                 $controllers = [
                     '' => 'Home',
                     'Consultas' => 'Consultas do dia',
-                    'Utente' => 'Lista de utentes'
+                    'Utentes' => 'Lista de utentes'
                 ];
             }
             if ($this->authModel->hasPermission('admin') && !$admin) {

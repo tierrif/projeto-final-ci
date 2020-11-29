@@ -22,7 +22,7 @@ class Utentes extends MY_Controller {
         // Obter a página atual.
         $page = ($this->uri->segment(URI_SEGMENT)) ? $this->uri->segment(URI_SEGMENT) : 0;
         // Configuração da paginação.
-        $config['base_url'] = base_url('utentes');
+        $config['base_url'] = base_url('utentes/index');
         $config['total_rows'] = $this->utenteModel->getCount();
         $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
         $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.

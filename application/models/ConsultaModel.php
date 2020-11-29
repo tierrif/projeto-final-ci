@@ -101,12 +101,12 @@ class ConsultaModel extends MY_Model {
         return $one;
     }
 
-    public function getByUtente($limit, $start, $idUtente, $unfinishedOnly = null) {
+    public function getByUtente($idUtente, $unfinishedOnly = null) {
         if ($unfinishedOnly) {
             // Filtrar só por consultas inacabadas
             $this->db->where('estado', 0);
         }
         $this->db->where('idUtente', $idUtente);
-        return $this->getAllWithReplacedKeys($limit, $start);
+        return $this->getAllWithReplacedKeys(-1, -1);
     }
 }

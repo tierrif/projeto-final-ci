@@ -35,31 +35,44 @@ class ConsultasAdmin extends MY_Controller {
         $this->pagination->initialize($config);
         $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getAllWithReplacedKeys($config['per_page'], $page, 'ConsultasAdmin'));
         $data['pagination'] = $this->pagination->create_links();
-        $data['consulta_form'] = $this->renderer->manualRender('details/consulta', [
+        $consultaData = [
             'morada_form_include' => $this->renderer->manualRender('includes/morada_form', []),
-            'action_uri' => base_url('ConsultasAdmin/details/-1/insert')
-        ]);
+            'action_uri' => base_url('ConsultasAdmin/details/-1/insert'),
+            'utentes' => $this->utenteModel->getAll(),
+            'medicos' => $this->medicoModel->getAll(),
+            'medico_value' => set_value('medico'),
+            'utente_value' => set_value('utente')
+        ];
+        // Iterar utentes e médicos para adicionar selected="selected".
+        foreach ($consultaData['medicos'] as &$medico) {
+            if ($consultaData['medico_value'] == $medico['id']) $medico['selected'] = 'selected="selected"';
+        }
+        foreach ($consultaData['utentes'] as &$utente) {
+            if ($consultaData['utente_value'] == $utente['id']) $utente['selected'] = 'selected="selected"';
+        }
+        $data['consulta_form'] = $this->renderer->manualRender('details/consulta', $consultaData);
 
         // Carregar template.
         $this->renderer->render('admin/consultas', $data, true, true);
     }
 
     public function perUtente($id, $unfinishedOnly = null) {
-        // Obter a página atual.
-        $page = ($this->uri->segment(URI_SEGMENT)) ? $this->uri->segment(URI_SEGMENT) : 0;
-        // Configuração da paginação.
-        $config['base_url'] = base_url('ConsultasAdmin/perUtente');
-        $config['total_rows'] = $this->consultaModel->getCount();
-        $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
-        $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
-        // Inicializar a paginação.
-        $this->pagination->initialize($config);
-        $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getByUtente($config['per_page'], $id, $unfinishedOnly));
-        $data['pagination'] = $this->pagination->create_links();
+        $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getByUtente($id, $unfinishedOnly));
         $data['consulta_form'] = $this->renderer->manualRender('details/consulta', [
             'morada_form_include' => $this->renderer->manualRender('includes/morada_form', []),
             'action_uri' => base_url('ConsultasAdmin/details/-1/insert')
         ]);
+        $data['utentes'] = $this->utenteModel->getAll();
+        $data['medicos'] = $this->medicoModel->getAll();
+        $data['medico_value'] = set_value('medico');
+        $data['utente_value'] = set_value('utente');
+        // Iterar utentes e médicos para adicionar selected="selected".
+        foreach ($data['medicos'] as &$medico) {
+            if ($data['medico_value'] == $medico['id']) $medico['selected'] = 'selected="selected"';
+        }
+        foreach ($data['utentes'] as &$utente) {
+            if ($data['utente_value'] == $utente['id']) $utente['selected'] = 'selected="selected"';
+        }
 
         // Carregar template.
         $this->renderer->render('admin/consultas', $data, true, true);
@@ -92,7 +105,7 @@ class ConsultasAdmin extends MY_Controller {
             $data['produtos_tosend'] = json_encode((new ProdutoJsonAdapter)->adapt($consulta['receita']['produtos']));
             if (!$consulta['receita']['produtos']) $data['produtos_tosend'] = '[]';
         } else {
-            if (!$this->upload->do_upload('pdf_file')) {
+            if ($_FILES['pdf_file']['name'] && !$this->upload->do_upload('pdf_file')) {
                 $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
                     'alert_type' => 'alert-danger',
                     'alert_message' => $this->upload->display_errors('', '') // Sem delimitadores.
