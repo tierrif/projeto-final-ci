@@ -22,7 +22,7 @@ class ConsultaModel extends MY_Model {
             $one['estado'] = arrayValue($one, 'estado') ? '<span class="green">terminada</span>' 
                 : '<span class="red">pendente</span>';
             // Traduzir valor booleano para âncora ou texto simples.
-            $one['receita'] = arrayValue($one, 'receita') ? '<a class="table-link" href="' . base_url('Receitas/details/' . $one['receita']['id']) . '">sim</a>'
+            $one['receita'] = arrayValue($one, 'receita') ? '<span class="green">sim</span>'
                 : '<span class="gray-default-cursor">não</span>';
             // Adicionar ao array de retorno esta consulta.
             $toReturn[] = $one;
