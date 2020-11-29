@@ -4,7 +4,7 @@ class ConsultasAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
-        $this->load->library(['pagination', 'form_validation']);
+        $this->load->library(['pagination', 'form_validation', 'upload']);
         $this->load->model(['consultaModel', 
             'enfermagemModel', 
             'produtoReceitaModel', 
@@ -71,6 +71,17 @@ class ConsultasAdmin extends MY_Controller {
             $data['produtos_tosend'] = json_encode((new ProdutoJsonAdapter)->adapt($consulta['receita']['produtos']));
             if (!$consulta['receita']['produtos']) $data['produtos_tosend'] = '[]';
         } else {
+            if (!$this->upload->do_upload('pdf_file')) {
+                $data['alert'] = $this->renderer->manualRender('includes/form_alert', [
+                    'alert_type' => 'alert-danger',
+                    'alert_message' => $this->upload->display_errors('', '') // Sem delimitadores.
+                ]);
+                $this->setCancelled(); // Cancelar este evento.
+                return $data;
+            } else {
+                // Setar a URI da receita.
+                $data['pdf_file_uri'] = base_url('assets/receitas/' . $this->upload->data('file_name'));
+            }
             $data = [
                 'data_value' => set_value('data'),
                 'estado_value' => set_value('estado') ? 'checked="checked"' : null,
@@ -79,7 +90,8 @@ class ConsultasAdmin extends MY_Controller {
                 'receita_form_include' => $this->renderer->manualRender('includes/receita_form', [
                     'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['receita']['id']),
                     'cuidado_value' => set_value('cuidado'),
-                    'receita_value' => set_value('receita')
+                    'receita_value' => set_value('receita'),
+                    'link-class' => arrayValue($consulta['receita'], 'document') ? 'table-link' : 'disabled-link'
                 ]),
                 'enfermeiros_tosend' => set_value('enfermeiros'),
                 'produtos_tosend' => set_value('produtos'),
@@ -158,7 +170,8 @@ class ConsultasAdmin extends MY_Controller {
         $receita = [
             'id' => ($id > 0 ? $this->input->post('idreceita') : null),
             'cuidado' => $this->input->post('cuidado'),
-            'receita' => $this->input->post('receita')
+            'receita' => $this->input->post('receita'),
+            'document' => base_url('assets/receitas/' . $this->upload->data('file_name'))
         ];
         $enfermagens = [];
         // Se passado, enfermeiros está em JSON.

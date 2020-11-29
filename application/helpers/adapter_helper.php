@@ -216,7 +216,9 @@ class ReceitaDetailsAdapter extends SingleItemAdapter {
         return [
             'cuidado_value' => 'cuidado',
             'receita_value' => 'receita',
-            'id_receita' => 'id'
+            'document_uri' => 'document',
+            'id_receita' => 'id',
+            'link-class'
         ];
     }
 } 

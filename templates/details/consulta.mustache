@@ -1,6 +1,11 @@
 <div class="container">
   {{&alert}}
-  <form id="detailForm" action="{{ action_uri }}" method="POST">
+  <form
+    id="detailForm"
+    action="{{ action_uri }}"
+    method="POST"
+    enctype="multipart/form-data"
+  >
     <div class="form-group">
       <label for="inputData">Data</label>
       <input
@@ -18,13 +23,20 @@
         class="form-check-input"
         id="checkEstado"
         name="estado"
-        {{ estado_value }}
+        {{
+        estado_value
+        }}
       />
       <label class="form-check-label" for="checkEstado">Terminada</label>
     </div>
     <div class="form-group">
       <label for="medico">Médico</label>
-      <select id="medico" class="form-control" name="medico" value="{{ medico_value }}">
+      <select
+        id="medico"
+        class="form-control"
+        name="medico"
+        value="{{ medico_value }}"
+      >
         {{#medicos}}
         <option value="{{ id }}" {{ selected }}>
           {{ nome }}
@@ -34,7 +46,12 @@
     </div>
     <div class="form-group">
       <label for="utente">Utente</label>
-      <select id="utente" class="form-control" name="utente" value="{{ utente_value }}">
+      <select
+        id="utente"
+        class="form-control"
+        name="utente"
+        value="{{ utente_value }}"
+      >
         {{#utentes}}
         <option value="{{ id }}" {{ selected }}>
           {{ nome }}
@@ -42,13 +59,27 @@
         {{/utentes}}
       </select>
     </div>
+    <div class="form-group">
+      <label for="file">Adicionar cópia da receita</label>
+      <input type="file" class="form-control-file" id="file" name="pdf_file" />
+    </div>
     {{&receita_form_include}}
     {{&modals_include}}
     {{&form_footer_include}}
     <!-- Inputs com informação JSON sobre produtos e enfermeiros. -->
-    <input id="produtos-info" type="hidden" value="{{ produtos_json }}"/>
-    <input id="enfermeiros-info" type="hidden" value="{{ enfermeiros_json }}"/>
-    <input id="produtos-tosend" type="hidden" value="{{ produtos_tosend }}" name="produtos"/>
-    <input id="enfermeiros-tosend" type="hidden" value="{{ enfermeiros_tosend }}" name="enfermeiros"/>
+    <input id="produtos-info" type="hidden" value="{{ produtos_json }}" />
+    <input id="enfermeiros-info" type="hidden" value="{{ enfermeiros_json }}" />
+    <input
+      id="produtos-tosend"
+      type="hidden"
+      value="{{ produtos_tosend }}"
+      name="produtos"
+    />
+    <input
+      id="enfermeiros-tosend"
+      type="hidden"
+      value="{{ enfermeiros_tosend }}"
+      name="enfermeiros"
+    />
   </form>
 </div>

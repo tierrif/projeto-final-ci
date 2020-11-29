@@ -87,6 +87,7 @@ class ConsultaModel extends MY_Model {
             // Adicionar ao array de produtos da consulta.
             $one['receita']['produtos'][] = $produto;
         }
+        $one['receita']['link-class'] = arrayValue($one['receita'], 'document') ? 'table-link' : 'disabled-link';
 
         // Adicionar URI de detalhes.
         $one['detalhes_uri'] = base_url('ConsultasAdmin/details/' . $one['id']);

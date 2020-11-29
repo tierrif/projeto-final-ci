@@ -45,10 +45,11 @@ class MY_Controller extends CI_Controller {
      * a barra de navegação (opcional) e o footer.
      */
     public $renderer;
+    private $cancelled; // Cancelar a renderização da página de detalhes.
 
     public function __construct() {
         parent::__construct();
-        $this->renderer = new Renderer($this->uri, $this->session);
+        $this->renderer = new Renderer($this->uri, $this->authModel);
         // Carregar o modelo de pesquisa.
         $this->load->model('searchModel');
     }
@@ -110,7 +111,7 @@ class MY_Controller extends CI_Controller {
         ]);
 
         // O comportamento da ação é ligeiramente diferente ao responder ao form.
-        if ($arg === 'fromForm') {
+        if ($arg === 'fromForm' && !$this->cancelled) {
             // Verifica se #formElements() foi implementado.
             if (!$this->formElements()) {
                 // Por defeito, é como que esta ação não existisse.
@@ -249,6 +250,10 @@ class MY_Controller extends CI_Controller {
     protected function getTemplateName() {
         return '';
     }
+
+    protected function setCancelled() {
+        $this->cancelled = true;
+    }
 }
 
 /*
@@ -258,17 +263,17 @@ class MY_Controller extends CI_Controller {
 class Renderer {
     private $mustache;
     private $uri;
-    private $session;
+    private $authModel;
 
-    public function __construct($uri, $session) {
+    public function __construct($uri, $authModel) {
         // Carregar a pasta de templates para o mustache.
         $loader = new Mustache_Loader_FilesystemLoader('./templates');
         // Instanciar o mustache com o loader.
         $this->mustache = new Mustache_Engine(['loader' => $loader]);
         // Setar o URI.
         $this->uri = $uri;
-        // Setar a instância da biblioteca session.
-        $this->session = $session;
+        // Setar a instância do authmodel.
+        $this->authModel = $authModel;
     }
 
     /*
@@ -300,7 +305,7 @@ class Renderer {
                     'utentes' => 'Lista de utentes'
                 ];
             }
-            if (hasPermission('admin', $this->session)) {
+            if ($this->authModel->hasPermission('admin')) {
                 $controllers['admin'] = 'Espaço admin';
             }
             // TODO: se tem login, botão é logout, senão é login.
