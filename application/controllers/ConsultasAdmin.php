@@ -14,8 +14,8 @@ class ConsultasAdmin extends MY_Controller {
             'utenteModel',
             'medicoModel'
         ]);
-        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('edit-consultas')) {
-            redirect(base_url('noaccess'));
+        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('create-consultas')) {
+            redirect(base_url('NoAccess'));
         }
     }
 

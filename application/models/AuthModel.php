@@ -1,6 +1,15 @@
 <? defined('BASEPATH') or exit('No direct script access allowed');
 
 class AuthModel extends MY_Model {
+    public function getAllPermissions() {
+        return [
+            'admin',
+            'manage-accounts',
+            'manage-entities',
+            'create-consultas'
+        ];
+    }
+
     public function checkPassword($usr, $pwd) {
         print_r(hash('sha256', $pwd));
         return $this->getByUsername($usr)['password'] === hash('sha256', $pwd);

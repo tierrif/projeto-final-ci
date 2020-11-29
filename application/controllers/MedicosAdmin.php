@@ -6,8 +6,8 @@ class MedicosAdmin extends MY_Controller {
         $this->load->helper(['serverConfig', 'adapter', 'util', 'form']);
         $this->load->library(['pagination', 'form_validation']);
         $this->load->model('medicoModel');
-        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('admin')) {
-            redirect(base_url('noaccess'));
+        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('manage-entities')) {
+            redirect(base_url('NoAccess'));
         }
     }
 

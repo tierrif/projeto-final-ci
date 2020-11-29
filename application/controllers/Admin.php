@@ -8,6 +8,9 @@ class Admin extends MY_Controller {
     public function __construct() {
         // Construtor-pai.
         parent::__construct();
+        if (!$this->authModel->isLoggedIn()) {
+            redirect(base_url('NoAccess'));
+        }
     }
 
     public function index() {

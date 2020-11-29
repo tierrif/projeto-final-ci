@@ -306,17 +306,17 @@ class Renderer {
                 $controllers = [
                     '' => 'Home',
                     'Consultas' => 'Consultas do dia',
-                    'Utentes' => 'Lista de utentes'
+                    'Utentes' => 'Lista de utentes',
+                    'Enfermeiros' => 'Enfermeiros',
+                    'Medicos' => 'Médicos'
                 ];
             }
             if ($this->authModel->hasPermission('admin') && !$admin) {
-                $controllers['admin'] = 'Espaço admin';
+                $controllers['Admin'] = 'Espaço staff';
             }
             // Definir o array associativo navData.
             $navData = [
                 'home_url' => base_url(),
-                'login_button_uri' => $loginButtonUri,
-                'login_button_text' => $loginButtonText,
                 'search_context' => base_url($this->uri->segment(1) . '/search'),
                 'login_uri' => $this->authModel->isLoggedIn() ? base_url('Login/logout') : base_url('Login'),
                 'login_text' => $this->authModel->isLoggedIn() ? 'Logout' : 'Login'
