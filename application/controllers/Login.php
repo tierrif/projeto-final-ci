@@ -5,13 +5,13 @@ class Login extends MY_Controller {
         parent::__construct();
         $this->load->model('authModel');
         $this->load->library('form_validation');
+    }
+
+    public function index($fromForm = null) {
         if ($this->authModel->isLoggedIn()) {
             // Login desnecessário.
             redirect(base_url('Base'));
         }
-    }
-
-    public function index($fromForm = null) {
         $data = [
             'login_base_url' => base_url('Login/index/fromForm'),
             'username_value' => set_value('username'),
@@ -42,7 +42,7 @@ class Login extends MY_Controller {
     }
 
     public function logout() {
-        $this->session->set_userdata('token', null);
+        $this->session->unset_userdata('token');
         redirect(base_url('Base'));
     }
 }
