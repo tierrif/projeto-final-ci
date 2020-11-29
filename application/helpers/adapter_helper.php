@@ -261,3 +261,32 @@ class ContaDetailsAdapter extends SingleItemAdapter {
         ];
     }
 }
+
+class MensagemAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'nome',
+            'email',
+            'vista',
+            'detalhes_uri'
+        ];
+    }
+}
+
+class ProdutoAdminAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'titulo',
+            'detalhes_uri'
+        ];
+    }
+}
+
+class ProdutoDetailsAdapter extends SingleItemAdapter {
+    public function toAdapt() {
+        return [
+            'titulo_value' => 'titulo',
+            'descricao_value' => 'descricao'
+        ];
+    }
+}

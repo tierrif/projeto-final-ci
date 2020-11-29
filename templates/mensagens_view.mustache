@@ -1,0 +1,51 @@
+<div class="container">
+  <h2 class="text-center text-white">{{ nome }} enviou a seguinte mensagem:</h2>
+  <p class="text-white">E-mail: {{ email }}</p>
+  <p class="gray-default-cursor">{{ mensagem }}</p>
+  <div
+    class="modal fade"
+    id="delModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="delModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delModalLabel">
+            Tem a certeza de que quer eliminar esta mensagem?
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Cancelar"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Isto é irreversível. Normalmente, esta ação é desnecessária, uma vez
+          que não interfere com mensagens não-lidas.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+          <a class="btn btn-danger" href="{{ del_uri }}" role="button"
+            >Eliminar</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="btn btn-danger"
+    data-toggle="modal"
+    data-target="#delModal"
+  >
+    Eliminar
+  </button>
+</div>

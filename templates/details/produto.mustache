@@ -1,0 +1,21 @@
+<div class="container">
+  {{&alert}}
+  <form id="detailForm" action="{{ action_uri }}" method="POST">
+    <div class="form-group">
+      <label for="inputTitle">Título</label>
+      <input
+        type="text"
+        class="form-control"
+        id="inputTitle"
+        placeholder="Título..."
+        value="{{ titulo_value }}"
+        name="titulo"
+      />
+    </div>
+    <div class="form-group">
+      <label for="descricao">Descrição</label>
+      <textarea class="form-control" id="descricao" rows="3" name="descricao">{{ descricao_value }}</textarea>
+    </div>
+    {{&form_footer_include}}
+  </form>
+</div>

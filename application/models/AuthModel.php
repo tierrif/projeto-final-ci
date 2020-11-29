@@ -6,7 +6,9 @@ class AuthModel extends MY_Model {
             'admin',
             'manage-accounts',
             'manage-entities',
-            'create-consultas'
+            'create-consultas',
+            'customer-support',
+            'manage-products'
         ];
     }
 

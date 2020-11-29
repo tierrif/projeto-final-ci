@@ -49,9 +49,9 @@ class MY_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->renderer = new Renderer($this->uri, $this->authModel);
         // Carregar o modelo de pesquisa.
-        $this->load->model('searchModel');
+        $this->load->model(['searchModel', 'mensagemModel']);
+        $this->renderer = new Renderer($this->uri, $this->authModel, $this->mensagemModel);
     }
 
     /*
@@ -264,8 +264,9 @@ class Renderer {
     private $mustache;
     private $uri;
     private $authModel;
+    private $mensagemModel;
 
-    public function __construct($uri, $authModel) {
+    public function __construct($uri, $authModel, $mensagemModel) {
         // Carregar a pasta de templates para o mustache.
         $loader = new Mustache_Loader_FilesystemLoader('./templates');
         // Instanciar o mustache com o loader.
@@ -274,6 +275,7 @@ class Renderer {
         $this->uri = $uri;
         // Setar a instância do authmodel.
         $this->authModel = $authModel;
+        $this->mensagemModel = $mensagemModel;
     }
 
     /*
@@ -301,6 +303,7 @@ class Renderer {
                     'EnfermeirosAdmin' => 'Enfermeiros Admin',
                     'MedicosAdmin' => 'Médicos Admin',
                     'ContasAdmin' => 'Gerir Contas',
+                    'Mensagens' => 'Mensagens' . $this->mensagemModel->getAmountOfUnreadMessages(),
                     'produtos' => 'Produtos'
                 ];
             } else {
@@ -309,10 +312,11 @@ class Renderer {
                     'Consultas' => 'Consultas do dia',
                     'Utentes' => 'Lista de utentes',
                     'Enfermeiros' => 'Enfermeiros',
-                    'Medicos' => 'Médicos'
+                    'Medicos' => 'Médicos',
+                    'Contacto' => 'Contacte-nos'
                 ];
             }
-            if ($this->authModel->hasPermission('admin') && !$admin) {
+            if ($this->authModel->isLoggedIn() && !$admin) {
                 $controllers['Admin'] = 'Espaço staff';
             }
             // Definir o array associativo navData.
@@ -324,7 +328,7 @@ class Renderer {
             ];
             foreach ($controllers as $controller => $text) {
                 $navData['nav_elements'][] = [
-                    'active' => strtolower($this->uri->segment(1)) === $controller ? 'active' : null,
+                    'active' => strtolower($this->uri->segment(1)) === strtolower($controller) ? 'active' : null,
                     'uri' => base_url($controller),
                     'text' => $text
                 ];
