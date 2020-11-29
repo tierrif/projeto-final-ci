@@ -30,7 +30,7 @@ class AuthModel extends MY_Model {
         $conta = $this->getBySession($this->session->userdata('token'));
         if (!$conta) return false;
         $perms = unserialize($conta['permissions']);
-        return in_array($permission, $perms);
+        return in_array($permission, $perms) || in_array('admin', $perms); // admin tem permissões totais.
     }
 
     public function getTable() {

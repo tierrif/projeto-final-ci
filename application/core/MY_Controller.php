@@ -294,8 +294,10 @@ class Renderer {
             // Todos os controladores da barra de navegação.
             if ($admin) {
                 $controllers = [
-                    'consultasAdmin' => 'Consultas',
-                    'utentesAdmin' => 'Utentes',
+                    'Admin' => 'Home',
+                    'ConsultasAdmin' => 'Consultas Admin',
+                    'UtentesAdmin' => 'Utentes Admin',
+                    'EnfermeirosAdmin' => 'Enfermeiros Admin',
                     'produtos' => 'Produtos'
                 ];
             } else {
@@ -305,7 +307,7 @@ class Renderer {
                     'utentes' => 'Lista de utentes'
                 ];
             }
-            if ($this->authModel->hasPermission('admin')) {
+            if ($this->authModel->hasPermission('admin') && !$admin) {
                 $controllers['admin'] = 'Espaço admin';
             }
             // TODO: se tem login, botão é logout, senão é login.

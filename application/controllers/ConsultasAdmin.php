@@ -3,7 +3,7 @@
 class ConsultasAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
-        $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
+        $this->load->helper(['serverConfig', 'adapter', 'util', 'form']);
         $this->load->library(['pagination', 'form_validation', 'upload']);
         $this->load->model(['consultaModel', 
             'enfermagemModel', 
@@ -14,7 +14,7 @@ class ConsultasAdmin extends MY_Controller {
             'utenteModel',
             'medicoModel'
         ]);
-        if (!isLoggedIn() || !hasPermission('edit-consultas', $this->session)) {
+        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('edit-consultas')) {
             redirect(base_url('noaccess'));
         }
     }
