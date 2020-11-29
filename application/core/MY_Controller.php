@@ -294,7 +294,8 @@ class Renderer {
             // Todos os controladores da barra de navegação.
             if ($admin) {
                 $controllers = [
-                    'Admin' => 'Home',
+                    '' => 'Voltar',
+                    'Admin' => 'Home Admin',
                     'ConsultasAdmin' => 'Consultas Admin',
                     'UtentesAdmin' => 'Utentes Admin',
                     'EnfermeirosAdmin' => 'Enfermeiros Admin',
@@ -303,8 +304,8 @@ class Renderer {
             } else {
                 $controllers = [
                     '' => 'Home',
-                    'consultas' => 'Consultas',
-                    'utentes' => 'Lista de utentes'
+                    'Consultas' => 'Consultas do dia',
+                    'Utente' => 'Lista de utentes'
                 ];
             }
             if ($this->authModel->hasPermission('admin') && !$admin) {

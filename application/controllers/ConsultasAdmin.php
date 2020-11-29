@@ -44,6 +44,27 @@ class ConsultasAdmin extends MY_Controller {
         $this->renderer->render('admin/consultas', $data, true, true);
     }
 
+    public function perUtente($id, $unfinishedOnly = null) {
+        // Obter a página atual.
+        $page = ($this->uri->segment(URI_SEGMENT)) ? $this->uri->segment(URI_SEGMENT) : 0;
+        // Configuração da paginação.
+        $config['base_url'] = base_url('ConsultasAdmin/perUtente');
+        $config['total_rows'] = $this->consultaModel->getCount();
+        $config['per_page'] = PAGE_NUM_OF_ROWS; // helpers/ServerConfig_helper.php.
+        $config['uri_segment'] = URI_SEGMENT; // helpers/ServerConfig_helper.php.
+        // Inicializar a paginação.
+        $this->pagination->initialize($config);
+        $data['consultas'] = (new ConsultaAdminAdapter)->adapt($this->consultaModel->getByUtente($config['per_page'], $id, $unfinishedOnly));
+        $data['pagination'] = $this->pagination->create_links();
+        $data['consulta_form'] = $this->renderer->manualRender('details/consulta', [
+            'morada_form_include' => $this->renderer->manualRender('includes/morada_form', []),
+            'action_uri' => base_url('ConsultasAdmin/details/-1/insert')
+        ]);
+
+        // Carregar template.
+        $this->renderer->render('admin/consultas', $data, true, true);
+    }
+
     protected function onDelete($id) {
         // Elimina.
         $this->consultaModel->deleteAlongReceita($id);

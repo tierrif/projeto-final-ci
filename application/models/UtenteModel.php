@@ -28,7 +28,7 @@ class UtenteModel extends MY_Model {
             // Se consultas_inacabadas for 0, mensagem por defeito:
             if (!$one['consultas_inacabadas']) $one['consultas_inacabadas'] = DEFAULT_CONSULTAS_INACABADAS;
             // Adicionar URI para mostrar as consultas pendentes.
-            $one['consultas_uri'] = base_url('consultasAdmin/perUtente/' . $one['id'] . '/finishedOnly');
+            $one['consultas_uri'] = base_url('consultasAdmin/perUtente/' . $one['id'] . '/unfinishedOnly');
             // Adicionar URI para os detalhes do utente.
             $one['detalhes_uri'] = base_url('utentesAdmin/details/' . $one['id']);
             // Adicionar ao array a retornar este utente atualizado.

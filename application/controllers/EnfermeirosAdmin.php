@@ -3,10 +3,10 @@
 class EnfermeirosAdmin extends MY_Controller {
     public function __construct() {
         parent::__construct();
-        $this->load->helper(['login', 'serverConfig', 'adapter', 'util', 'form']);
+        $this->load->helper(['serverConfig', 'adapter', 'util', 'form']);
         $this->load->library(['pagination', 'form_validation']);
         $this->load->model('enfermeiroModel');
-        if (!isLoggedIn() || !hasPermission('admin', $this->session)) {
+        if (!$this->authModel->isLoggedIn() || !$this->authModel->hasPermission('admin')) {
             redirect(base_url('noaccess'));
         }
     }
