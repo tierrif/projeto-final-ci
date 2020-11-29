@@ -66,6 +66,8 @@ class ConsultasAdmin extends MY_Controller {
             $data = (new ConsultaDetailsAdapter)->adapt($consulta);
             $data['receita_form_include'] = $this->renderer->manualRender('includes/receita_form',
             (new ReceitaDetailsAdapter)->adapt($consulta['receita']));
+            $data['enfermeiros_tosend'] = json_encode((new EnfermeiroJsonAdapter)->adapt($consulta['enfermeiros']));
+            $data['produtos_tosend'] = json_encode((new ProdutoJsonAdapter)->adapt($consulta['receita']['produtos']));
         } else {
             $data = [
                 'data_value' => set_value('data'),
@@ -76,15 +78,21 @@ class ConsultasAdmin extends MY_Controller {
                     'id_receita' => (set_value('idreceita') ? set_value('idreceita') : $consulta['receita']['id']),
                     'cuidado_value' => set_value('cuidado'),
                     'receita_value' => set_value('receita')
-                ])
+                ]),
+                'enfermeiros_tosend' => set_value('enfermeiros'),
+                'produtos_tosend' => set_value('produtos'),
             ];
         }
+
+        // Prevenir erros no JS.
+        if (!$data['produtos_tosend']) $data['produtos_tosend'] = '[]';
+        if (!$data['enfermeiros_tosend']) $data['enfermeiros_tosend'] = '[]';
 
         // Dados em comum.
         $data['utentes'] = $utentes;
         $data['medicos'] = $medicos;
-        $data['produtos_json'] = json_encode($produtos);
-        $data['enfermeiros_json'] = json_encode($enfermeiros);
+        $data['produtos_json'] = json_encode((new ProdutoJsonAdapter)->adapt($produtos));
+        $data['enfermeiros_json'] = json_encode((new EnfermeiroJsonAdapter)->adapt($enfermeiros));
         $data['modals_include'] = $this->renderer->manualRender('includes/add_prod_enf_modal', []);
         // Iterar utentes e médicos para adicionar selected="selected".
         foreach ($data['medicos'] as &$medico) {
@@ -152,7 +160,7 @@ class ConsultasAdmin extends MY_Controller {
         ];
         $enfermagens = [];
         // Se passado, enfermeiros está em JSON.
-        if ($this->input->post('enfermeiros_tosend')) {
+        if ($this->input->post('enfermeiros')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('enfermeiros'), true);
             // O JSON passado é um array. Iterá-lo.
@@ -166,7 +174,7 @@ class ConsultasAdmin extends MY_Controller {
         $produtoreceitas = [];
         $produtos = [];
         // Se passado, produtos está em JSON.
-        if ($this->input->post('produtos_tosend')) {
+        if ($this->input->post('produtos')) {
             // Passar de JSON para array associativo.
             $decoded = json_decode($this->input->post('enfermeiros'), true);
             // O JSON passado é um array. Iterá-lo.
@@ -177,7 +185,7 @@ class ConsultasAdmin extends MY_Controller {
                 ];
                 $produtos[] = [
                     'id' => arrayValue($produto, 'id'),
-                    'titulo' => $produto['titulo'],
+                    'titulo' => arrayValue($produto, 'titulo'),
                     'descricao' => arrayValue($produto, 'descricao')
                 ];
             }
@@ -251,7 +259,8 @@ class ConsultasAdmin extends MY_Controller {
 
     protected function temporaryData() {
         return [
-            'nome' => 'Vazio ' . date('d/m/yy H:i:s')
+            'data' => date('yy-m-d'),
+            'cuidado' => 'Vazio ' . date('d/m/yy H:i:s')
         ];
     }
 }

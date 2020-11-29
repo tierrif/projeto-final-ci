@@ -3,12 +3,12 @@ window.onload = function () {
   console.log('Carregado.');
   // Como o botão de submição está fora do form, isto tem de ser feito em JS.
   const submitBtn = document.getElementById('insert-btn');
-  if (!submitBtn) return;
-
-  // Listener de click.
-  submitBtn.onclick = function () {
-    const form = document.getElementById('detailForm');
-    if (form) form.submit(); // Submeter.
+  if (submitBtn) {
+    // Listener de click.
+    submitBtn.onclick = function () {
+      const form = document.getElementById('detailForm');
+      if (form) form.submit(); // Submeter.
+    }
   }
 
   // Details de consultas.
@@ -25,14 +25,21 @@ window.onload = function () {
   const enfermeiroToSend = document.getElementById('enfermeiros-tosend');
   const produtoToSend = document.getElementById('produtos-tosend');
 
-  // Inicializar itens da pesquisa nas janelas modais.
-  search('enfermeiro', enfermeiroInfo, 'nome', enfermeiroToSend, { value: '' });
-  search('produto', produtoInfo, 'nome', produtoToSend, { value: '' })
-
   // Criar um listener para todos os <tr> clicáveis na tabela de resultados.
   for (const tr of document.getElementsByClassName('selectable-tr')) {
     tr.onclick = handleTrClick;
   }
+
+  // Preencher toSend com informação das variáveis JSON info.
+  for (const enfermeiro of JSON.parse(enfermeiroToSend.value.replace(/&quot;/g, '"'))) {
+    addToList(enfermeiro.id, 'enfermeiro', enfermeiro.nome);
+  }
+  for (const produto of JSON.parse(produtoToSend.value.replace(/&quot;/g, '"'))) {
+    addToList(produto.id, 'produto', produto.titulo);
+  }
+
+  // Inicializar itens da pesquisa nas janelas modais.
+  reloadSearch();
 
   // Tratar da pesquisa.
 
@@ -79,7 +86,7 @@ window.onload = function () {
     for (const item of info) {
       if (item[toSearchOn].toLowerCase().startsWith(context.value.toLowerCase())) { // this.value.
         // Verificar se já está na lista toSend.
-        for (const toSendItem of JSON.parse(toSend.value)) {
+        for (const toSendItem of JSON.parse(toSend.value.replace(/&quot;/g, '"'))) {
           if (toSendItem.id == item.id) continue infoIterate;
         }
         // Título começa pelo que o user escreveu, por isso, adicionar um novo tr.
@@ -107,7 +114,7 @@ window.onload = function () {
       // Obter ID do produto a partir do ID do elemento.
       const idProduto = this.id.replace('produto-', '');
 
-      const toSend = JSON.parse(produtoToSend.value);
+      const toSend = JSON.parse(produtoToSend.value.replace(/&quot;/g, '"'));
 
       // Adicionar ao objeto a informação deste produto.
       toSend.push({
@@ -121,34 +128,26 @@ window.onload = function () {
       document.getElementById('produtos-info').value = JSON.stringify(produtoInfo);
 
       // Adicionar à div.
-      const li = document.createElement('li');
-      li.classList.add('removable-item');
-      // Atributos nossos com prefixo data- são suportados pelo HTML nativamente.
-      li.setAttribute('data-id', idProduto);
-      li.innerHTML = this.getElementsByClassName('produto-nome')[0].childNodes[0].nodeValue;
-      li.onclick = handleLiClick;
-      document.getElementById('produtos-list').appendChild(li);
+      addToList(idProduto, 'produto', this.getElementsByClassName('produto-nome')[0].childNodes[0].nodeValue);
     } else if (this.id.startsWith('enfermeiro')) {
       // Obter ID do enfermeiro a partir do ID do elemento.
       const idEnfermeiro = this.id.replace('enfermeiro-', '');
+      const nome = this.getElementsByClassName('enfermeiro-nome')[0].childNodes[0].nodeValue;
 
-      const toSend = JSON.parse(enfermeiroToSend.value);
+      const toSend = JSON.parse(enfermeiroToSend.value.replace(/&quot;/g, '"'));
 
       // Adicionar ao objeto a informação deste enfermeiro.
-      toSend.push({ id: idEnfermeiro });
+      toSend.push({ 
+        id: idEnfermeiro,
+        nome: nome
+      });
       enfermeiroToSend.value = JSON.stringify(toSend);
 
       // Atualizar o JSON.
       document.getElementById('enfermeiros-info').value = JSON.stringify(enfermeiroInfo);
 
       // Adicionar à div.
-      const li = document.createElement('li');
-      li.classList.add('removable-item');
-      // Atributos nossos com prefixo data- são suportados pelo HTML nativamente.
-      li.setAttribute('data-id', idEnfermeiro);
-      li.innerHTML = this.getElementsByClassName('enfermeiro-nome')[0].childNodes[0].nodeValue;
-      li.onclick = handleLiClick;
-      document.getElementById('enfermeiros-list').appendChild(li);
+      addToList(idEnfermeiro, 'enfermeiro', nome);
     }
 
     // Remover este elemento.
@@ -158,17 +157,42 @@ window.onload = function () {
   function handleLiClick() {
     const id = this.getAttribute('data-id');
     if (this.parentElement.id === 'produtos-list') {
-      const toSend = JSON.parse(produtoToSend.value);
+      const toSend = JSON.parse(produtoToSend.value.replace(/&quot;/g, '"'));
       // Remover do JSON.
-      for (const i in toSend) if (toSend[i].id == id) delete toSend[i]
+      for (const i in toSend) {
+        if (toSend[i].id == id) toSend.splice(i, 1); // Remover elemento no índice i.
+        break;
+      }
       produtoToSend.value = JSON.stringify(toSend);
     } else if (this.parentElement.id === 'enfermeiros-list') {
-      const toSend = JSON.parse(enfermeiroToSend.value);
+      const toSend = JSON.parse(enfermeiroToSend.value.replace(/&quot;/g, '"'));
       // Remover do JSON.
-      for (const i in toSend) if (toSend[i].id == id) delete toSend[i]
+      for (const i in toSend) {
+        if (toSend[i].id == id) {
+          toSend.splice(i, 1); // Remover elemento no índice i.
+          break;
+        }
+      }
       enfermeiroToSend.value = JSON.stringify(toSend);
     }
     // Remover o elemento.
     this.remove();
+    // Atualizar a pesquisa.
+    reloadSearch();
+  }
+
+  function reloadSearch() {
+    search('enfermeiro', enfermeiroInfo, 'nome', enfermeiroToSend, { value: '' });
+    search('produto', produtoInfo, 'nome', produtoToSend, { value: '' })
+  }
+
+  function addToList(id, type, content) {
+    const li = document.createElement('li');
+    li.classList.add('removable-item');
+    // Atributos nossos com prefixo data- são suportados pelo HTML nativamente.
+    li.setAttribute('data-id', id);
+    li.innerHTML = content;
+    li.onclick = handleLiClick;
+    document.getElementById(type + 's-list').appendChild(li);
   }
 }

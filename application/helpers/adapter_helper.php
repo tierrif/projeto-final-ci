@@ -215,7 +215,28 @@ class ReceitaDetailsAdapter extends SingleItemAdapter {
     public function toAdapt() {
         return [
             'cuidado_value' => 'cuidado',
-            'receita_value' => 'receita'
+            'receita_value' => 'receita',
+            'id_receita' => 'id'
         ];
     }
 } 
+
+class EnfermeiroJsonAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'id',
+            'nome',
+            'especialidade'
+        ];
+    }
+}
+
+class ProdutoJsonAdapter extends CollectionAdapter {
+    public function toAdapt() {
+        return [
+            'id',
+            'titulo',
+            'descricao'
+        ];
+    }
+}

@@ -76,6 +76,17 @@ class ConsultaModel extends MY_Model {
             // Adicionar ao array de enfermeiros da consulta.
             $one['enfermeiros'][] = $enfermeiro;
         }
+        // Query à BD.
+        $produtosreceitas = $this->db->get(parent::PRODUTO_RECEITA_TABLE)->result_array();
+        // Inicializar o array de produtos.
+        $one['receita']['produtos'] = [];
+        // Iterar os produtosreceitas para obter todos os produtos.
+        foreach ($produtosreceitas as $pr) {
+            // Produto.
+            $produto = $this->db->get_where(parent::PRODUTO_TABLE, ['id' => $pr['idProduto']])->row_array();
+            // Adicionar ao array de produtos da consulta.
+            $one['receita']['produtos'][] = $produto;
+        }
 
         // Adicionar URI de detalhes.
         $one['detalhes_uri'] = base_url('ConsultasAdmin/details/' . $one['id']);
